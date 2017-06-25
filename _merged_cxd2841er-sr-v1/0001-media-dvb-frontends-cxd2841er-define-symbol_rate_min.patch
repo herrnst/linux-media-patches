@@ -1,0 +1,34 @@
+From e6ca727cdf4b8080b3ab01f093d401f015eb9763 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 19 Mar 2017 14:44:39 +0100
+Subject: [PATCH] [media] dvb-frontends/cxd2841er: define symbol_rate_min/max
+ in T/C fe-ops
+
+Fixes "w_scan -f c" complaining with
+
+  This dvb driver is *buggy*: the symbol rate limits are undefined - please
+  report to linuxtv.org)
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/cxd2841er.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/dvb-frontends/cxd2841er.c b/drivers/media/dvb-frontends/cxd2841er.c
+index 614bfb3..ce37dc2 100644
+--- a/drivers/media/dvb-frontends/cxd2841er.c
++++ b/drivers/media/dvb-frontends/cxd2841er.c
+@@ -3852,7 +3852,9 @@ static struct dvb_frontend_ops cxd2841er_t_c_ops = {
+ 			FE_CAN_MUTE_TS |
+ 			FE_CAN_2G_MODULATION,
+ 		.frequency_min = 42000000,
+-		.frequency_max = 1002000000
++		.frequency_max = 1002000000,
++		.symbol_rate_min = 870000,
++		.symbol_rate_max = 11700000
+ 	},
+ 	.init = cxd2841er_init_tc,
+ 	.sleep = cxd2841er_sleep_tc,
+-- 
+2.10.2
+

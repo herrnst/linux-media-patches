@@ -1,0 +1,35 @@
+From e789034072a3fc24a62cb908fcab2ce703908616 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sat, 25 Feb 2017 14:20:52 +0100
+Subject: [PATCH v3 02/13] [media] dvb-frontends/stv0367: print CPAMP status
+ only if stv_debug is enabled
+
+The CPAMP log lines generated in stv0367_ter_check_cpamp() are printed
+everytime tuning succeeds or fails, quite cluttering the normal kernel log.
+Use dprintk() instead of printk(KERN_ERR...) so that if the information is
+needed, it'll be printed when the stv_debug modparam is enabled.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0367.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/stv0367.c b/drivers/media/dvb-frontends/stv0367.c
+index fc80934..0064d9d 100644
+--- a/drivers/media/dvb-frontends/stv0367.c
++++ b/drivers/media/dvb-frontends/stv0367.c
+@@ -1262,9 +1262,9 @@ stv0367_ter_signal_type stv0367ter_check_cpamp(struct stv0367_state *state,
+ 	dprintk("******last CPAMPvalue= %d at wd=%d\n", CPAMPvalue, wd);
+ 	if (CPAMPvalue < CPAMPMin) {
+ 		CPAMPStatus = FE_TER_NOCPAMP;
+-		printk(KERN_ERR "CPAMP failed\n");
++		dprintk("%s: CPAMP failed\n", __func__);
+ 	} else {
+-		printk(KERN_ERR "CPAMP OK !\n");
++		dprintk("%s: CPAMP OK !\n", __func__);
+ 		CPAMPStatus = FE_TER_CPAMPOK;
+ 	}
+ 
+-- 
+2.10.2
+

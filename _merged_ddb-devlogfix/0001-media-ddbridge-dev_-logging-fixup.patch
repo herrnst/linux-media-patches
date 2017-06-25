@@ -1,0 +1,34 @@
+From 8165ec5b76451d732231cb11e0044d08dec8933f Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 25 Jun 2017 10:49:03 +0200
+Subject: [PATCH] [media] ddbridge: dev_* logging fixup
+
+Fixup
+
+  commit d52786ddd2d5 ("media: ddbridge: make (ddb)readl in while-loops fail-safe")
+
+after/wrt
+
+  commit 11e358bf37e8 ("media: ddbridge: use dev_* macros in favor of printk")
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index c5745ae2ba5e..32f4d3746c8e 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -122,7 +122,7 @@ static inline u32 safe_ddbreadl(struct ddb *dev, u32 adr)
+ 
+ 	/* (ddb)readl returns (uint)-1 (all bits set) on failure, catch that */
+ 	if (val == ~0) {
+-		printk(KERN_ERR "ddbreadl failure, adr=%08x\n", adr);
++		dev_err(&dev->pdev->dev, "ddbreadl failure, adr=%08x\n", adr);
+ 		return 0;
+ 	}
+ 
+-- 
+2.13.0
+

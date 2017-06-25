@@ -1,0 +1,39 @@
+From eab942d679027cff9c0a0569ac28797630597645 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 25 Jun 2017 12:37:01 +0200
+Subject: [PATCH v3 4/4] [media] dvb-frontends/stv0367: update UCB readout
+ condition logic
+
+Since the other statistics are read when fe_status conditions are TRUE,
+change the ucblocks readout logic to match this aswell.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0367.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/stv0367.c b/drivers/media/dvb-frontends/stv0367.c
+index 6097752a93bc..18ad1488be48 100644
+--- a/drivers/media/dvb-frontends/stv0367.c
++++ b/drivers/media/dvb-frontends/stv0367.c
+@@ -3113,13 +3113,11 @@ static int stv0367ddb_read_status(struct dvb_frontend *fe,
+ 	else
+ 		p->cnr.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
+ 
+-	/* stop if demod isn't locked */
+-	if (!(*status & FE_HAS_LOCK)) {
++	/* read uncorrected blocks on FE_HAS_LOCK */
++	if (*status & FE_HAS_LOCK)
++		stv0367ddb_read_ucblocks(fe);
++	else
+ 		p->block_error.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
+-		return ret;
+-	}
+-
+-	stv0367ddb_read_ucblocks(fe);
+ 
+ 	return 0;
+ }
+-- 
+2.13.0
+

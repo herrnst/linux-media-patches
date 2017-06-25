@@ -1,0 +1,124 @@
+From 683997ccd04b102173a63c8b95260f2e2e0b3eb6 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sat, 25 Feb 2017 15:01:33 +0100
+Subject: [PATCH v2 05/12] [media] dvb-frontends/stv0367: make PLLSETUP a
+ function, add 58MHz IC speed
+
+This moves the PLL SETUP code from stv0367ter_init() into a dedicated
+function, and also make it possible to configure 58Mhz IC speed at
+27MHz Xtal (used on STV0367-based DDB cards/modules in QAM mode).
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0367.c | 73 +++++++++++++++++++++++------------
+ drivers/media/dvb-frontends/stv0367.h |  3 ++
+ 2 files changed, 51 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/stv0367.c b/drivers/media/dvb-frontends/stv0367.c
+index 5b52673..da10d9a 100644
+--- a/drivers/media/dvb-frontends/stv0367.c
++++ b/drivers/media/dvb-frontends/stv0367.c
+@@ -271,6 +271,53 @@ static void stv0367_write_table(struct stv0367_state *state,
+ 	}
+ }
+ 
++static void stv0367_pll_setup(struct stv0367_state *state,
++				u32 icspeed, u32 xtal)
++{
++	/* note on regs: R367TER_* and R367CAB_* defines each point to
++	 * 0xf0d8, so just use R367TER_ for both cases
++	 */
++
++	switch (icspeed) {
++	case STV0367_ICSPEED_58000:
++		switch (xtal) {
++		default:
++		case 27000000:
++			dprintk("STV0367 SetCLKgen for 58MHz IC and 27Mhz crystal\n");
++			/* PLLMDIV: 27, PLLNDIV: 232 */
++			stv0367_writereg(state, R367TER_PLLMDIV, 0x1b);
++			stv0367_writereg(state, R367TER_PLLNDIV, 0xe8);
++			break;
++		}
++		break;
++	default:
++	case STV0367_ICSPEED_53125:
++		switch (xtal) {
++			/* set internal freq to 53.125MHz */
++		case 16000000:
++			stv0367_writereg(state, R367TER_PLLMDIV, 0x2);
++			stv0367_writereg(state, R367TER_PLLNDIV, 0x1b);
++			break;
++		case 25000000:
++			stv0367_writereg(state, R367TER_PLLMDIV, 0xa);
++			stv0367_writereg(state, R367TER_PLLNDIV, 0x55);
++			break;
++		default:
++		case 27000000:
++			dprintk("FE_STV0367TER_SetCLKgen for 27Mhz\n");
++			stv0367_writereg(state, R367TER_PLLMDIV, 0x1);
++			stv0367_writereg(state, R367TER_PLLNDIV, 0x8);
++			break;
++		case 30000000:
++			stv0367_writereg(state, R367TER_PLLMDIV, 0xc);
++			stv0367_writereg(state, R367TER_PLLNDIV, 0x55);
++			break;
++		}
++	}
++
++	stv0367_writereg(state, R367TER_PLLSETUP, 0x18);
++}
++
+ static int stv0367ter_gate_ctrl(struct dvb_frontend *fe, int enable)
+ {
+ 	struct stv0367_state *state = fe->demodulator_priv;
+@@ -918,31 +965,7 @@ static int stv0367ter_init(struct dvb_frontend *fe)
+ 	stv0367_write_table(state,
+ 		stv0367_deftabs[state->deftabs][STV0367_TAB_TER]);
+ 
+-	switch (state->config->xtal) {
+-		/*set internal freq to 53.125MHz */
+-	case 16000000:
+-		stv0367_writereg(state, R367TER_PLLMDIV, 0x2);
+-		stv0367_writereg(state, R367TER_PLLNDIV, 0x1b);
+-		stv0367_writereg(state, R367TER_PLLSETUP, 0x18);
+-		break;
+-	case 25000000:
+-		stv0367_writereg(state, R367TER_PLLMDIV, 0xa);
+-		stv0367_writereg(state, R367TER_PLLNDIV, 0x55);
+-		stv0367_writereg(state, R367TER_PLLSETUP, 0x18);
+-		break;
+-	default:
+-	case 27000000:
+-		dprintk("FE_STV0367TER_SetCLKgen for 27Mhz\n");
+-		stv0367_writereg(state, R367TER_PLLMDIV, 0x1);
+-		stv0367_writereg(state, R367TER_PLLNDIV, 0x8);
+-		stv0367_writereg(state, R367TER_PLLSETUP, 0x18);
+-		break;
+-	case 30000000:
+-		stv0367_writereg(state, R367TER_PLLMDIV, 0xc);
+-		stv0367_writereg(state, R367TER_PLLNDIV, 0x55);
+-		stv0367_writereg(state, R367TER_PLLSETUP, 0x18);
+-		break;
+-	}
++	stv0367_pll_setup(state, STV0367_ICSPEED_53125, state->config->xtal);
+ 
+ 	stv0367_writereg(state, R367TER_I2CRPT, 0xa0);
+ 	stv0367_writereg(state, R367TER_ANACTRL, 0x00);
+diff --git a/drivers/media/dvb-frontends/stv0367.h b/drivers/media/dvb-frontends/stv0367.h
+index 26c38a0..aaa0236 100644
+--- a/drivers/media/dvb-frontends/stv0367.h
++++ b/drivers/media/dvb-frontends/stv0367.h
+@@ -25,6 +25,9 @@
+ #include <linux/dvb/frontend.h>
+ #include "dvb_frontend.h"
+ 
++#define STV0367_ICSPEED_53125	53125000
++#define STV0367_ICSPEED_58000	58000000
++
+ struct stv0367_config {
+ 	u8 demod_address;
+ 	u32 xtal;
+-- 
+2.10.2
+

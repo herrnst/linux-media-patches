@@ -1,0 +1,35 @@
+From 520ee7246546097f3bc5cb94bd52a21c480ad37f Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sat, 28 Jan 2017 18:32:34 +0100
+Subject: [PATCH 01/19] [media] dvb-frontends/cxd2841er: remove kernel log spam
+ in non-debug levels
+
+This moves the I2C debug dump into the preceding dev_dbg() call by
+utilising the %*ph format macro and removes the call to
+print_hex_debug_bytes().
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/cxd2841er.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/cxd2841er.c b/drivers/media/dvb-frontends/cxd2841er.c
+index 614bfb3..60d85ce 100644
+--- a/drivers/media/dvb-frontends/cxd2841er.c
++++ b/drivers/media/dvb-frontends/cxd2841er.c
+@@ -214,10 +214,8 @@ static void cxd2841er_i2c_debug(struct cxd2841er_priv *priv,
+ 				const u8 *data, u32 len)
+ {
+ 	dev_dbg(&priv->i2c->dev,
+-		"cxd2841er: I2C %s addr %02x reg 0x%02x size %d\n",
+-		(write == 0 ? "read" : "write"), addr, reg, len);
+-	print_hex_dump_bytes("cxd2841er: I2C data: ",
+-		DUMP_PREFIX_OFFSET, data, len);
++		"cxd2841er: I2C %s addr %02x reg 0x%02x size %d data %*ph\n",
++		(write == 0 ? "read" : "write"), addr, reg, len, len, data);
+ }
+ 
+ static int cxd2841er_write_regs(struct cxd2841er_priv *priv,
+-- 
+2.10.2
+

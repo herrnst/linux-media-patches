@@ -1,0 +1,70 @@
+From 03acf4e84172ffa22cd1cb8ea83efb10976e80e1 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 9 Apr 2017 21:22:15 +0200
+Subject: [PATCH 00/19] cxd2841er/ddbridge: support Sony CXD28xx hardware
+
+Important note: This series depends on the stv0367/ddbridge series posted
+earlier (patches 12 [1] and 13 [2], depending on the I2C functions and the
+TDA18212 attach function).
+
+This series improves the cxd2841er demodulator driver and adds some bits
+to make it more versatile to be used in more scenarios. Also, the ddbridge
+code is updated to recognize all hardware (PCIe cards/bridges and DuoFlex
+modules) with Sony CXD28xx tuners, including the newly introduced MaxA8
+eight-tuner C2T2 cards.
+
+The series has been tested (together with the STV0367 series) on a wide
+variety of cards, including CineCTv7, DuoFlex C(2)T2 modules and MaxA8
+cards without any issues. Testing was done with TVHeadend, VDR and MythTV.
+
+Note that the i2c_gate_ctrl() flag is needed in this series aswell since
+the i2c_gate_ctrl function needs to be remapped and mutex_lock protected
+for the same reasons as in the STV0367 series.
+
+Besides printk() warnings, checkpatch.pl doesn't complain.
+
+Comments and reviews appreciated.
+
+[1] https://patchwork.linuxtv.org/patch/40398/
+[2] https://patchwork.linuxtv.org/patch/40399/
+
+Daniel Scheller (19):
+  [media] dvb-frontends/cxd2841er: remove kernel log spam in non-debug
+    levels
+  [media] dvb-frontends/cxd2841er: do I2C reads in one go
+  [media] dvb-frontends/cxd2841er: immediately unfreeze regs when done
+  [media] dvb-frontends/cxd2841er: support CXD2837/38/43ER demods/Chip
+    IDs
+  [media] dvb-frontends/cxd2841er: replace IFFREQ calc macros into
+    functions
+  [media] dvb-frontends/cxd2841er: add variable for configuration flags
+  [media] dvb-frontends/cxd2841er: make call to i2c_gate_ctrl optional
+  [media] dvb-frontends/cxd2841er: support IF speed calc from tuner
+    values
+  [media] dvb-frontends/cxd2841er: TS_SERIAL config flag
+  [media] dvb-frontends/cxd2841er: make ASCOT use optional
+  [media] dvb-frontends/cxd2841er: optionally tune earlier in
+    set_frontend()
+  [media] dvb-frontends/cxd2841er: make lock wait in set_fe_tc()
+    optional
+  [media] dvb-frontends/cxd2841er: configurable IFAGCNEG
+  [media] dvb-frontends/cxd2841er: more configurable TSBITS
+  [media] dvb-frontends/cxd2841er: improved snr reporting
+  [media] ddbridge: board control setup, ts quirk flags
+  [media] ddbridge: add I2C functions, add XO2 module support
+  [media] ddbridge: support for Sony CXD28xx C/C2/T/T2 tuner modules
+  [media] ddbridge: hardware IDs for new C2T2 cards and other devices
+
+ drivers/media/dvb-frontends/cxd2841er.c            | 302 +++++++++++------
+ drivers/media/dvb-frontends/cxd2841er.h            |  10 +
+ drivers/media/dvb-frontends/cxd2841er_priv.h       |   3 +
+ drivers/media/pci/ddbridge/Kconfig                 |   3 +
+ drivers/media/pci/ddbridge/ddbridge-core.c         | 356 ++++++++++++++++++++-
+ drivers/media/pci/ddbridge/ddbridge-regs.h         |   4 +
+ drivers/media/pci/ddbridge/ddbridge.h              |  40 ++-
+ drivers/media/pci/netup_unidvb/netup_unidvb_core.c |   3 +-
+ 8 files changed, 615 insertions(+), 106 deletions(-)
+
+-- 
+2.10.2
+

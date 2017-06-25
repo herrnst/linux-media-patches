@@ -1,0 +1,45 @@
+From f23b3489856977985571e9ecdff230981163831b Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 26 Mar 2017 18:33:36 +0200
+Subject: [PATCH v3 12/13] [media] ddbridge: add i2c_read_regs()
+
+Adds new i2c_read_regs() function and make i2c_read_reg() wrap into this
+with len=1. Required for the tuner_tda18212_ping() and XO2 handling
+functions (part of the Sony CXD28xx support patch series).
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index 340cff0..acb9cbe 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -54,15 +54,21 @@ static int i2c_read(struct i2c_adapter *adapter, u8 adr, u8 *val)
+ 	return (i2c_transfer(adapter, msgs, 1) == 1) ? 0 : -1;
+ }
+ 
+-static int i2c_read_reg(struct i2c_adapter *adapter, u8 adr, u8 reg, u8 *val)
++static int i2c_read_regs(struct i2c_adapter *adapter,
++			 u8 adr, u8 reg, u8 *val, u8 len)
+ {
+ 	struct i2c_msg msgs[2] = {{.addr = adr,  .flags = 0,
+ 				   .buf  = &reg, .len   = 1 },
+ 				  {.addr = adr,  .flags = I2C_M_RD,
+-				   .buf  = val,  .len   = 1 } };
++				   .buf  = val,  .len   = len } };
+ 	return (i2c_transfer(adapter, msgs, 2) == 2) ? 0 : -1;
+ }
+ 
++static int i2c_read_reg(struct i2c_adapter *adapter, u8 adr, u8 reg, u8 *val)
++{
++	return i2c_read_regs(adapter, adr, reg, val, 1);
++}
++
+ static int i2c_read_reg16(struct i2c_adapter *adapter, u8 adr,
+ 			  u16 reg, u8 *val)
+ {
+-- 
+2.10.2
+

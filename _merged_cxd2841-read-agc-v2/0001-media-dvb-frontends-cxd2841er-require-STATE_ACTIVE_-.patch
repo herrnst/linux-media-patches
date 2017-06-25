@@ -1,0 +1,55 @@
+From bccd16def85d16f1b1899b437fb7f054e957d550 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Thu, 22 Jun 2017 20:30:08 +0200
+Subject: [PATCH] [media] dvb-frontends/cxd2841er: require STATE_ACTIVE_* for
+ agc readout
+
+When the demod driver puts the demod into sleep or shutdown state and it's
+status is then polled e.g. via "dvb-fe-tool -m", i2c errors are printed
+to the kernel log. If the last delsys was DVB-T/T2:
+
+  cxd2841er: i2c wr failed=-5 addr=6c reg=00 len=1
+  cxd2841er: i2c rd failed=-5 addr=6c reg=26
+
+and if it was DVB-C:
+
+  cxd2841er: i2c wr failed=-5 addr=6c reg=00 len=1
+  cxd2841er: i2c rd failed=-5 addr=6c reg=49
+
+This happens when read_status unconditionally calls into the
+read_signal_strength() function which triggers the read_agc_gain_*()
+functions, where these registered are polled.
+
+This isn't a critical thing since when the demod is active again, no more
+such errors are logged, however this might make users suspecting defects.
+
+Fix this by requiring STATE_ACTIVE_* in priv->state. If it isn't in any
+active state, additionally set the strength scale to NOT_AVAILABLE.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+V2/follow-up to https://patchwork.linuxtv.org/patch/42061/, changed as
+requested. Tested, working fine (ie. no "false" i2c failures).
+
+ drivers/media/dvb-frontends/cxd2841er.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/dvb-frontends/cxd2841er.c b/drivers/media/dvb-frontends/cxd2841er.c
+index 08f67d60a7d9..12bff778c97f 100644
+--- a/drivers/media/dvb-frontends/cxd2841er.c
++++ b/drivers/media/dvb-frontends/cxd2841er.c
+@@ -3279,7 +3279,10 @@ static int cxd2841er_get_frontend(struct dvb_frontend *fe,
+ 	else if (priv->state == STATE_ACTIVE_TC)
+ 		cxd2841er_read_status_tc(fe, &status);
+ 
+-	cxd2841er_read_signal_strength(fe);
++	if (priv->state == STATE_ACTIVE_TC || priv->state == STATE_ACTIVE_S)
++		cxd2841er_read_signal_strength(fe);
++	else
++		p->strength.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
+ 
+ 	if (status & FE_HAS_LOCK) {
+ 		cxd2841er_read_snr(fe);
+-- 
+2.13.0
+

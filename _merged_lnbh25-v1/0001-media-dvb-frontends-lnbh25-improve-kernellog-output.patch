@@ -1,0 +1,41 @@
+From f1b8e1415f151d178483a86598cc1e8628020c5b Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Thu, 26 Jan 2017 23:15:13 +0100
+Subject: [PATCH] [media] dvb-frontends/lnbh25: improve kernellog output
+
+Use dev_dbg() in conjunction with the %*ph format macro to print the vmon
+status debug, thus hiding continuous hexdumping from default log levels.
+Also, change the attach success log line from error to info severity.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/lnbh25.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/lnbh25.c b/drivers/media/dvb-frontends/lnbh25.c
+index ef3021e964be..cb486e879fdd 100644
+--- a/drivers/media/dvb-frontends/lnbh25.c
++++ b/drivers/media/dvb-frontends/lnbh25.c
+@@ -76,8 +76,8 @@ static int lnbh25_read_vmon(struct lnbh25_priv *priv)
+ 			return ret;
+ 		}
+ 	}
+-	print_hex_dump_bytes("lnbh25_read_vmon: ",
+-		DUMP_PREFIX_OFFSET, status, sizeof(status));
++	dev_dbg(&priv->i2c->dev, "%s(): %*ph\n",
++		__func__, (int) sizeof(status), status);
+ 	if ((status[0] & (LNBH25_STATUS_OFL | LNBH25_STATUS_VMON)) != 0) {
+ 		dev_err(&priv->i2c->dev,
+ 			"%s(): voltage in failure state, status reg 0x%x\n",
+@@ -178,7 +178,7 @@ struct dvb_frontend *lnbh25_attach(struct dvb_frontend *fe,
+ 	fe->ops.release_sec = lnbh25_release;
+ 	fe->ops.set_voltage = lnbh25_set_voltage;
+ 
+-	dev_err(&i2c->dev, "%s(): attached at I2C addr 0x%02x\n",
++	dev_info(&i2c->dev, "%s(): attached at I2C addr 0x%02x\n",
+ 		__func__, priv->i2c_address);
+ 	return fe;
+ }
+-- 
+2.13.0
+

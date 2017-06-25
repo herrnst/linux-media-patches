@@ -1,0 +1,56 @@
+From 59e13a01dfb4edd5396c8df8a63f018749468843 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 26 Mar 2017 21:36:10 +0200
+Subject: [PATCH 4/4] [media] dvb-frontends/stv0367: DVB-C signal strength
+ statistics
+
+Provide QAM/DVB-C signal strength in decibel scale. Values returned from
+stv0367cab_get_rf_lvl() are good but need to be multiplied as they're in
+1dBm precision.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0367.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/drivers/media/dvb-frontends/stv0367.c b/drivers/media/dvb-frontends/stv0367.c
+index 0b13a407df23..cf684ba70a3f 100644
+--- a/drivers/media/dvb-frontends/stv0367.c
++++ b/drivers/media/dvb-frontends/stv0367.c
+@@ -3018,6 +3018,25 @@ static int stv0367ddb_read_status(struct dvb_frontend *fe,
+ 	return -EINVAL;
+ }
+ 
++static void stv0367ddb_read_signal_strength(struct dvb_frontend *fe)
++{
++	struct stv0367_state *state = fe->demodulator_priv;
++	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
++	s32 signalstrength;
++
++	switch (state->activedemod) {
++	case demod_cab:
++		signalstrength = stv0367cab_get_rf_lvl(state) * 1000;
++		break;
++	default:
++		p->strength.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
++		return;
++	}
++
++	p->strength.stat[0].scale = FE_SCALE_DECIBEL;
++	p->strength.stat[0].uvalue = signalstrength;
++}
++
+ static void stv0367ddb_read_snr(struct dvb_frontend *fe)
+ {
+ 	struct stv0367_state *state = fe->demodulator_priv;
+@@ -3102,6 +3121,7 @@ static int stv0367ddb_get_frontend(struct dvb_frontend *fe,
+ 
+ 	stv0367ddb_read_ucblocks(fe);
+ 	stv0367ddb_read_snr(fe);
++	stv0367ddb_read_signal_strength(fe);
+ 
+ 	return 0;
+ }
+-- 
+2.13.0
+

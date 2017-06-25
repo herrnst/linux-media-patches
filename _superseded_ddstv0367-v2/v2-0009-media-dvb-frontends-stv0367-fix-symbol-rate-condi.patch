@@ -1,0 +1,60 @@
+From d3bdbe8f3f8df200d22956931993d88a04f35bde Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sat, 25 Feb 2017 19:39:34 +0100
+Subject: [PATCH v2 09/12] [media] dvb-frontends/stv0367: fix symbol rate
+ conditions in cab_SetQamSize()
+
+The values used for comparing symbol rates and the resulting conditional
+reg writes seem wrong (rates multiplied by ten), so fix those values.
+While this doesn't seem to influence operation, it should be fixed anyway.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0367.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/stv0367.c b/drivers/media/dvb-frontends/stv0367.c
+index fb41c7b..ffc046a 100644
+--- a/drivers/media/dvb-frontends/stv0367.c
++++ b/drivers/media/dvb-frontends/stv0367.c
+@@ -1838,11 +1838,11 @@ static enum stv0367cab_mod stv0367cab_SetQamSize(struct stv0367_state *state,
+ 	case FE_CAB_MOD_QAM64:
+ 		stv0367_writereg(state, R367CAB_IQDEM_ADJ_AGC_REF, 0x82);
+ 		stv0367_writereg(state, R367CAB_AGC_PWR_REF_L, 0x5a);
+-		if (SymbolRate > 45000000) {
++		if (SymbolRate > 4500000) {
+ 			stv0367_writereg(state, R367CAB_FSM_STATE, 0xb0);
+ 			stv0367_writereg(state, R367CAB_EQU_CTR_LPF_GAIN, 0xc1);
+ 			stv0367_writereg(state, R367CAB_EQU_CRL_LPF_GAIN, 0xa5);
+-		} else if (SymbolRate > 25000000) {
++		} else if (SymbolRate > 2500000) {
+ 			stv0367_writereg(state, R367CAB_FSM_STATE, 0xa0);
+ 			stv0367_writereg(state, R367CAB_EQU_CTR_LPF_GAIN, 0xc1);
+ 			stv0367_writereg(state, R367CAB_EQU_CRL_LPF_GAIN, 0xa6);
+@@ -1860,9 +1860,9 @@ static enum stv0367cab_mod stv0367cab_SetQamSize(struct stv0367_state *state,
+ 		stv0367_writereg(state, R367CAB_AGC_PWR_REF_L, 0x76);
+ 		stv0367_writereg(state, R367CAB_FSM_STATE, 0x90);
+ 		stv0367_writereg(state, R367CAB_EQU_CTR_LPF_GAIN, 0xb1);
+-		if (SymbolRate > 45000000)
++		if (SymbolRate > 4500000)
+ 			stv0367_writereg(state, R367CAB_EQU_CRL_LPF_GAIN, 0xa7);
+-		else if (SymbolRate > 25000000)
++		else if (SymbolRate > 2500000)
+ 			stv0367_writereg(state, R367CAB_EQU_CRL_LPF_GAIN, 0xa6);
+ 		else
+ 			stv0367_writereg(state, R367CAB_EQU_CRL_LPF_GAIN, 0x97);
+@@ -1875,9 +1875,9 @@ static enum stv0367cab_mod stv0367cab_SetQamSize(struct stv0367_state *state,
+ 		stv0367_writereg(state, R367CAB_IQDEM_ADJ_AGC_REF, 0x94);
+ 		stv0367_writereg(state, R367CAB_AGC_PWR_REF_L, 0x5a);
+ 		stv0367_writereg(state, R367CAB_FSM_STATE, 0xa0);
+-		if (SymbolRate > 45000000)
++		if (SymbolRate > 4500000)
+ 			stv0367_writereg(state, R367CAB_EQU_CTR_LPF_GAIN, 0xc1);
+-		else if (SymbolRate > 25000000)
++		else if (SymbolRate > 2500000)
+ 			stv0367_writereg(state, R367CAB_EQU_CTR_LPF_GAIN, 0xc1);
+ 		else
+ 			stv0367_writereg(state, R367CAB_EQU_CTR_LPF_GAIN, 0xd1);
+-- 
+2.10.2
+
