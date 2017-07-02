@@ -1,0 +1,44 @@
+From ec2a9265edf627bd53b931590272d70bfb7b3243 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sat, 24 Jun 2017 13:41:22 +0200
+Subject: [PATCH v2.1 09/10] [media] ddbridge: stv0910 single demod mode module
+ option
+
+Adds a stv0910_single modparm which, when set, configures the stv0910 to
+run in single demodulator mode, currently intended for high bit rate
+testing.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+Tested-by: Richard Scobie <r.scobie@clear.net.nz>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index b3fc6a875279..e762396730db 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -53,6 +53,10 @@ static int xo2_speed = 2;
+ module_param(xo2_speed, int, 0444);
+ MODULE_PARM_DESC(xo2_speed, "default transfer speed for xo2 based duoflex, 0=55,1=75,2=90,3=104 MBit/s, default=2, use attribute to change for individual cards");
+ 
++static int stv0910_single;
++module_param(stv0910_single, int, 0444);
++MODULE_PARM_DESC(stv0910_single, "use stv0910 cards as single demods");
++
+ DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
+ 
+ /* MSI had problems with lost interrupts, fixed but needs testing */
+@@ -942,6 +946,9 @@ static int demod_attach_stv0910(struct ddb_input *input, int type)
+ 	struct stv0910_cfg cfg = stv0910_p;
+ 	struct lnbh25_config lnbcfg = lnbh25_cfg;
+ 
++	if (stv0910_single)
++		cfg.single = 1;
++
+ 	if (type)
+ 		cfg.parallel = 2;
+ 	input->fe = dvb_attach(stv0910_attach, i2c, &cfg, (input->nr & 1));
+-- 
+2.13.0
+
