@@ -1,0 +1,29 @@
+From 62e76364a4de487416c1b536ed6741fe88da6e05 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sat, 8 Apr 2017 17:17:03 +0200
+Subject: [PATCH v3 05/10] [media] dvb-frontends/stv0910: Add missing
+ set_frontend fe-op
+
+This was missing from the frontend_ops.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+Tested-by: Richard Scobie <r.scobie@clear.net.nz>
+---
+ drivers/media/dvb-frontends/stv0910.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/media/dvb-frontends/stv0910.c b/drivers/media/dvb-frontends/stv0910.c
+index dc4d829bb47a..7e8a460449c5 100644
+--- a/drivers/media/dvb-frontends/stv0910.c
++++ b/drivers/media/dvb-frontends/stv0910.c
+@@ -1668,6 +1668,7 @@ static struct dvb_frontend_ops stv0910_ops = {
+ 	.sleep				= sleep,
+ 	.release                        = release,
+ 	.i2c_gate_ctrl                  = gate_ctrl,
++	.set_frontend			= set_parameters,
+ 	.get_frontend_algo              = get_algo,
+ 	.get_frontend                   = get_frontend,
+ 	.tune                           = tune,
+-- 
+2.13.0
+
