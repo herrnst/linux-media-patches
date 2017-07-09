@@ -1,0 +1,57 @@
+From b5be5dd769e55417ef1e25563d118faf1d2c8bce Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 2 Jul 2017 19:19:07 +0200
+Subject: [PATCH 12/14] [media] ddbridge: fix dereference before check
+
+Both ts_release() and ts_open() can use "output" before check (smatch):
+
+  drivers/media/pci/ddbridge/ddbridge-core.c:816 ts_release() warn: variable dereferenced before check 'output' (see line 809)
+  drivers/media/pci/ddbridge/ddbridge-core.c:836 ts_open() warn: variable dereferenced before check 'output' (see line 828)
+
+Fix by performing checks on those pointers.
+
+Cc: Ralph Metzler <rjkm@metzlerbros.de>
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index 6896cd1f3a96..ff87e0462c7e 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -738,8 +738,13 @@ static unsigned int ts_poll(struct file *file, poll_table *wait)
+ static int ts_release(struct inode *inode, struct file *file)
+ {
+ 	struct dvb_device *dvbdev = file->private_data;
+-	struct ddb_output *output = dvbdev->priv;
+-	struct ddb_input *input = output->port->input[0];
++	struct ddb_output *output = NULL;
++	struct ddb_input *input = NULL;
++
++	if (dvbdev) {
++		output = dvbdev->priv;
++		input = output->port->input[0];
++	}
+ 
+ 	if ((file->f_flags & O_ACCMODE) == O_RDONLY) {
+ 		if (!input)
+@@ -757,8 +762,13 @@ static int ts_open(struct inode *inode, struct file *file)
+ {
+ 	int err;
+ 	struct dvb_device *dvbdev = file->private_data;
+-	struct ddb_output *output = dvbdev->priv;
+-	struct ddb_input *input = output->port->input[0];
++	struct ddb_output *output = NULL;
++	struct ddb_input *input = NULL;
++
++	if (dvbdev) {
++		output = dvbdev->priv;
++		input = output->port->input[0];
++	}
+ 
+ 	if ((file->f_flags & O_ACCMODE) == O_RDONLY) {
+ 		if (!input)
+-- 
+2.13.0
+
