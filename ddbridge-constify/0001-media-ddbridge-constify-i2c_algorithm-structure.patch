@@ -1,0 +1,33 @@
+From 172beb1e143be8f6f316c7d919599b9119df838f Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Mon, 10 Jul 2017 17:05:36 +0200
+Subject: [PATCH] [media] ddbridge: constify i2c_algorithm structure
+
+Original patch and issue identified by Gustavo A. R. Silva
+<garsilva@embeddedor.com> via [1] using Coccinelle. While at it, even
+mark the struct static again since it isn't referenced anywhere else.
+
+[1] http://www.spinics.net/lists/linux-media/msg118221.html
+
+Cc: Gustavo A. R. Silva <garsilva@embeddedor.com>
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-i2c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-i2c.c b/drivers/media/pci/ddbridge/ddbridge-i2c.c
+index 22b2543da4ca..3d0aefe05cec 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-i2c.c
++++ b/drivers/media/pci/ddbridge/ddbridge-i2c.c
+@@ -212,7 +212,7 @@ static u32 ddb_i2c_functionality(struct i2c_adapter *adap)
+ 	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
+ }
+ 
+-struct i2c_algorithm ddb_i2c_algo = {
++static const struct i2c_algorithm ddb_i2c_algo = {
+ 	.master_xfer   = ddb_i2c_master_xfer,
+ 	.functionality = ddb_i2c_functionality,
+ };
+-- 
+2.13.0
+
