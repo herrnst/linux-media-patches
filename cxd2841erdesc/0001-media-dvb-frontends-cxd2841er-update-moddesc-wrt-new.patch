@@ -1,0 +1,29 @@
+From a6234009255edce59a83afdfd4b318908257905a Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 23 Jul 2017 16:39:07 +0200
+Subject: [PATCH] [media] dvb-frontends/cxd2841er: update moddesc wrt new chip
+ support
+
+Since the driver now recognizes and supports more chip variants, reflect
+this fact in the module description accordingly.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/cxd2841er.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/dvb-frontends/cxd2841er.c b/drivers/media/dvb-frontends/cxd2841er.c
+index 0ab1fc845927..48ee9bc00c06 100644
+--- a/drivers/media/dvb-frontends/cxd2841er.c
++++ b/drivers/media/dvb-frontends/cxd2841er.c
+@@ -3999,6 +3999,6 @@ static struct dvb_frontend_ops cxd2841er_t_c_ops = {
+ 	.get_frontend_algo = cxd2841er_get_algo
+ };
+ 
+-MODULE_DESCRIPTION("Sony CXD2841ER/CXD2854ER DVB-C/C2/T/T2/S/S2 demodulator driver");
++MODULE_DESCRIPTION("Sony CXD2837/38/41/43/54ER DVB-C/C2/T/T2/S/S2 demodulator driver");
+ MODULE_AUTHOR("Sergey Kozlov <serjk@netup.ru>, Abylay Ospan <aospan@netup.ru>");
+ MODULE_LICENSE("GPL");
+-- 
+2.13.0
+

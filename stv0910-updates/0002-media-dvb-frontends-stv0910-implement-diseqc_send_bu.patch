@@ -1,0 +1,59 @@
+From 893853ab677eb0c1eae7c815a52169ec8e072968 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Thu, 20 Jul 2017 22:48:22 +0200
+Subject: [PATCH 2/7] [media] dvb-frontends/stv0910: implement
+ diseqc_send_burst
+
+This implements the diseqc_send_burst frontend op to support sending
+mini-DISEQC bursts. Picked up from dddvb's driver package where this
+specific block was disabled via #if 0/#endif, but is still working
+according to feedback from upstream, so add it.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0910.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/drivers/media/dvb-frontends/stv0910.c b/drivers/media/dvb-frontends/stv0910.c
+index 4084c142f1e4..bbe609143497 100644
+--- a/drivers/media/dvb-frontends/stv0910.c
++++ b/drivers/media/dvb-frontends/stv0910.c
+@@ -1638,6 +1638,27 @@ static int send_master_cmd(struct dvb_frontend *fe,
+ 	return 0;
+ }
+ 
++static int send_burst(struct dvb_frontend *fe, enum fe_sec_mini_cmd burst)
++{
++	struct stv *state = fe->demodulator_priv;
++	u16 offs = state->nr ? 0x40 : 0;
++	u8 value;
++
++	if (burst == SEC_MINI_A) {
++		write_reg(state, RSTV0910_P1_DISTXCFG + offs, 0x3F);
++		value = 0x00;
++	} else {
++		write_reg(state, RSTV0910_P1_DISTXCFG + offs, 0x3E);
++		value = 0xFF;
++	}
++	wait_dis(state, 0x40, 0x00);
++	write_reg(state, RSTV0910_P1_DISTXFIFO + offs, value);
++	write_reg(state, RSTV0910_P1_DISTXCFG + offs, 0x3A);
++	wait_dis(state, 0x20, 0x20);
++
++	return 0;
++}
++
+ static int sleep(struct dvb_frontend *fe)
+ {
+ 	struct stv *state = fe->demodulator_priv;
+@@ -1673,6 +1694,7 @@ static struct dvb_frontend_ops stv0910_ops = {
+ 	.set_tone			= set_tone,
+ 
+ 	.diseqc_send_master_cmd		= send_master_cmd,
++	.diseqc_send_burst              = send_burst,
+ };
+ 
+ static struct stv_base *match_base(struct i2c_adapter  *i2c, u8 adr)
+-- 
+2.13.0
+
