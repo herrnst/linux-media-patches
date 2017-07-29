@@ -1,0 +1,39 @@
+From dbfbbc7fa49abc0e475e6071943b805bfeded426 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Wed, 28 Jun 2017 21:53:08 +0200
+Subject: [PATCH v2 09/14] [media] ddbridge: fix possible buffer overflow in
+ ddb_ports_init()
+
+Report from smatch:
+
+  drivers/media/pci/ddbridge/ddbridge-core.c:2659 ddb_ports_init() error: buffer overflow 'dev->port' 32 <= u32max
+
+Fix by making sure "p" is greater than zero before checking for
+"dev->port[].type == DDB_CI_EXTERNAL_XO2".
+
+Cc: Ralph Metzler <rjkm@metzlerbros.de>
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+Tested-by: Richard Scobie <r.scobie@clear.net.nz>
+Tested-by: Jasmin Jessich <jasmin@anw.at>
+Tested-by: Dietmar Spingler <d_spingler@freenet.de>
+Tested-by: Manfred Knick <Manfred.Knick@t-online.de>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index 9aee112c0d88..06bd37f8b95d 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -2551,7 +2551,7 @@ void ddb_ports_init(struct ddb *dev)
+ 			port->dvb[0].adap = &dev->adap[2 * p];
+ 			port->dvb[1].adap = &dev->adap[2 * p + 1];
+ 
+-			if ((port->class == DDB_PORT_NONE) && i &&
++			if ((port->class == DDB_PORT_NONE) && i && p &&
+ 			    dev->port[p - 1].type == DDB_CI_EXTERNAL_XO2) {
+ 				port->class = DDB_PORT_CI;
+ 				port->type = DDB_CI_EXTERNAL_XO2_B;
+-- 
+2.13.0
+

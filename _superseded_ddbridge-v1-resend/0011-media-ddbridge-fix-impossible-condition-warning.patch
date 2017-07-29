@@ -1,0 +1,44 @@
+From fb083600fb94be04eba26e9a94181abbc8263d65 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 2 Jul 2017 19:09:14 +0200
+Subject: [PATCH RESEND 11/14] [media] ddbridge: fix impossible condition
+ warning
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Smatch and gcc complained:
+
+  drivers/media/pci/ddbridge/ddbridge-core.c:3491 bpsnr_show() warn: impossible condition '(snr[0] == 255) => ((-128)-127 == 255)'
+
+  drivers/media/pci/ddbridge/ddbridge-core.c: In function ‘bpsnr_show’:
+  drivers/media/pci/ddbridge/ddbridge-core.c:3491:13: warning: comparison is always false due to limited range of data type [-Wtype-limits]
+
+Fix this by changing the type of snr to unsigned char.
+
+Cc: Ralph Metzler <rjkm@metzlerbros.de>
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+Tested-by: Richard Scobie <r.scobie@clear.net.nz>
+Tested-by: Jasmin Jessich <jasmin@anw.at>
+Tested-by: Dietmar Spingler <d_spingler@freenet.de>
+Tested-by: Manfred Knick <Manfred.Knick@t-online.de>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index 2479cb70743e..e3119351b9a1 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -3250,7 +3250,7 @@ static ssize_t bpsnr_show(struct device *device,
+ 			 struct device_attribute *attr, char *buf)
+ {
+ 	struct ddb *dev = dev_get_drvdata(device);
+-	char snr[32];
++	unsigned char snr[32];
+ 
+ 	if (!dev->i2c_num)
+ 		return 0;
+-- 
+2.13.0
+
