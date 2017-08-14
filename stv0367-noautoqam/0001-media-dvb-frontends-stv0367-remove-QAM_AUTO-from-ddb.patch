@@ -1,0 +1,31 @@
+From 51325f9b38ef39d1858941afee66512e8d16ffcd Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 13 Aug 2017 21:18:48 +0200
+Subject: [PATCH] [media] dvb-frontends/stv0367: remove QAM_AUTO from
+ ddb_fe_ops
+
+Since the cab_* codepath doesn't recognize QAM_AUTO, don't announce that
+it is supported when it really isn't. Fixes ie. w_scan from
+unconditionally using QAM_AUTO on DVB-C scans.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0367.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/dvb-frontends/stv0367.c b/drivers/media/dvb-frontends/stv0367.c
+index bc6eb0ab733e..f3529df8211d 100644
+--- a/drivers/media/dvb-frontends/stv0367.c
++++ b/drivers/media/dvb-frontends/stv0367.c
+@@ -3283,7 +3283,7 @@ static const struct dvb_frontend_ops stv0367ddb_ops = {
+ 			0x400 |/* FE_CAN_QAM_4 */
+ 			FE_CAN_QAM_16 | FE_CAN_QAM_32  |
+ 			FE_CAN_QAM_64 | FE_CAN_QAM_128 |
+-			FE_CAN_QAM_256 | FE_CAN_QAM_AUTO |
++			FE_CAN_QAM_256 |
+ 			/* DVB-T */
+ 			FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 |
+ 			FE_CAN_FEC_5_6 | FE_CAN_FEC_7_8 | FE_CAN_FEC_AUTO |
+-- 
+2.13.0
+
