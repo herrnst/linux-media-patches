@@ -1,0 +1,30 @@
+From b493daf51a8b34411b52e87c6c65443ddfbf0b1e Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 20 Aug 2017 14:40:55 +0200
+Subject: [PATCH 2/2] [media] dvb-frontends/stv6111.c: return NULL instead of
+ plain integer
+
+Fixes:
+  stv6111.c:665:24: warning: Using plain integer as NULL pointer
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv6111.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/dvb-frontends/stv6111.c b/drivers/media/dvb-frontends/stv6111.c
+index 9a59fa318207..e3e90070e293 100644
+--- a/drivers/media/dvb-frontends/stv6111.c
++++ b/drivers/media/dvb-frontends/stv6111.c
+@@ -669,7 +669,7 @@ struct dvb_frontend *stv6111_attach(struct dvb_frontend *fe,
+ 		fe->ops.i2c_gate_ctrl(fe, 0);
+ 	if (stat < 0) {
+ 		kfree(state);
+-		return 0;
++		return NULL;
+ 	}
+ 	fe->tuner_priv = state;
+ 	return fe;
+-- 
+2.13.0
+
