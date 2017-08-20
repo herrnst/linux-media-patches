@@ -1,0 +1,48 @@
+From 21a9661485f1a4ea733905c250a80f0d9310026f Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Wed, 26 Jul 2017 19:02:17 +0200
+Subject: [PATCH 1/6] [media] ddbridge: fix gap handling
+
+Force gap setting if given by attribute and enable gap for older regmaps.
+Also, setting a gap value of 128 via sysfs will now disable gap.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index c290d3fecc8d..98a12c644e44 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -336,6 +336,7 @@ static void calc_con(struct ddb_output *output, u32 *con, u32 *con2, u32 flags)
+ 	if (output->port->gap != 0xffffffff) {
+ 		flags |= 1;
+ 		gap = output->port->gap;
++		max_bitrate = 0;
+ 	}
+ 	if (dev->link[0].info->type == DDB_OCTOPUS_CI && output->port->nr > 1) {
+ 		*con = 0x10c;
+@@ -372,6 +373,7 @@ static void calc_con(struct ddb_output *output, u32 *con, u32 *con2, u32 flags)
+ 				*con |= 0x810; /* 96 MBit/s and gap */
+ 				max_bitrate = 96000;
+ 			}
++			*con |= 0x10; /* enable gap */
+ 		}
+ 	}
+ 	if (max_bitrate > 0) {
+@@ -3203,8 +3205,10 @@ static ssize_t gap_store(struct device *device, struct device_attribute *attr,
+ 
+ 	if (sscanf(buf, "%u\n", &val) != 1)
+ 		return -EINVAL;
+-	if (val > 20)
++	if (val > 128)
+ 		return -EINVAL;
++	if (val == 128)
++		val = 0xffffffff;
+ 	dev->port[num].gap = val;
+ 	return count;
+ }
+-- 
+2.13.0
+

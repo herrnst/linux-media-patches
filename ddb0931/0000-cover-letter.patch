@@ -1,0 +1,37 @@
+From c54bf14c457a6b6c0330a43be12b6d2b015de53b Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 20 Aug 2017 12:19:18 +0200
+Subject: [PATCH 0/6] ddbridge: updates from dddvb-0.9.31
+
+Digital Devices bumped their driver package to version 0.9.31, which most
+importantly carries all refactorisations which are part of the pending
+mainline driver bump (bringing dddvb and the proposed kernel version much
+closer to each other), and improves further on that. This series bumps
+the mainline driver accordingly.
+
+These patches should go in right after and alongside the ddbridge-0.9.29
+v4 bump series (see [1], means: 4.14 window material) so we have an
+uptodate driver in mainline when the next major version gets tagged by
+Linus.
+
+[1] http://www.spinics.net/lists/linux-media/msg119911.html
+
+Daniel Scheller (6):
+  [media] ddbridge: fix gap handling
+  [media] ddbridge: move ddb_unmap(), cleanup modparams
+  [media] ddbridge: move device ID table to ddbridge-hw
+  [media] ddbridge: remove ddb_info's from the global scope
+  [media] ddbridge: const'ify all ddb_info, ddb_regmap et al
+  [media] ddbridge: bump version string to 0.9.31intermediate-integrated
+
+ drivers/media/pci/ddbridge/ddbridge-core.c |  46 +++++++---
+ drivers/media/pci/ddbridge/ddbridge-hw.c   | 129 ++++++++++++++++++++++-------
+ drivers/media/pci/ddbridge/ddbridge-hw.h   |  45 ++++------
+ drivers/media/pci/ddbridge/ddbridge-i2c.c  |   5 +-
+ drivers/media/pci/ddbridge/ddbridge-main.c |  67 ++-------------
+ drivers/media/pci/ddbridge/ddbridge.h      |  27 +++---
+ 6 files changed, 172 insertions(+), 147 deletions(-)
+
+-- 
+2.13.0
+

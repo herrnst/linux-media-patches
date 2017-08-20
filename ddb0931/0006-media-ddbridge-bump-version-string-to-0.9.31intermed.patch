@@ -1,0 +1,27 @@
+From c54bf14c457a6b6c0330a43be12b6d2b015de53b Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Wed, 26 Jul 2017 19:52:58 +0200
+Subject: [PATCH 6/6] [media] ddbridge: bump version string to
+ 0.9.31intermediate-integrated
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge.h b/drivers/media/pci/ddbridge/ddbridge.h
+index c1a1edfe15aa..e9afa96bd9df 100644
+--- a/drivers/media/pci/ddbridge/ddbridge.h
++++ b/drivers/media/pci/ddbridge/ddbridge.h
+@@ -63,7 +63,7 @@
+ #include "dvb_ca_en50221.h"
+ #include "dvb_net.h"
+ 
+-#define DDBRIDGE_VERSION "0.9.29-integrated"
++#define DDBRIDGE_VERSION "0.9.31intermediate-integrated"
+ 
+ #define DDB_MAX_I2C    32
+ #define DDB_MAX_PORT   32
+-- 
+2.13.0
+

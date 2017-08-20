@@ -1,0 +1,26 @@
+From df2b52e8ea778bffddc1c38c83ac381678e007f5 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 20 Aug 2017 12:18:59 +0200
+Subject: [PATCH 0/2] stv0910: updates from dddvb 0.9.31
+
+Digital Devices released dddvb-0.9.31 which carries these two fixes for
+the stv0910 demodulator driver.
+
+Should go in after the seven stv0910/stv6111 cleanup patches (see [1]),
+namely after [2]. They might apply cleanly without them, but they may
+also hard-depend and conflict without them (I honestly did not test
+this as I applied them ontop of my "carry everything" branch).
+
+[1] http://www.spinics.net/lists/linux-media/msg119065.html
+[2] https://patchwork.linuxtv.org/patch/42728/
+
+Daniel Scheller (2):
+  [media] dvb-frontends/stv0910: fix FE_HAS_LOCK check order in tune()
+  [media] dvb-frontends/stv0910: fix mask for scramblingcode setup
+
+ drivers/media/dvb-frontends/stv0910.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+-- 
+2.13.0
+

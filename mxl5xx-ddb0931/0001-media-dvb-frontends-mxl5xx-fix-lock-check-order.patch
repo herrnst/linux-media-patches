@@ -1,0 +1,38 @@
+From 1231bc5d80bbae6527f839b7b51198cf4bdcb669 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 13 Aug 2017 15:36:43 +0200
+Subject: [PATCH] [media] dvb-frontends/mxl5xx: fix lock check order
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+When the mxl5xx driver together with the ddbridge glue gets merged ([1]),
+this one should go in aswell - this fix is part of the dddvb-0.9.31
+release.
+
+ drivers/media/dvb-frontends/mxl5xx.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/mxl5xx.c b/drivers/media/dvb-frontends/mxl5xx.c
+index 676c96c216c3..d9136d67f5d4 100644
+--- a/drivers/media/dvb-frontends/mxl5xx.c
++++ b/drivers/media/dvb-frontends/mxl5xx.c
+@@ -638,13 +638,14 @@ static int tune(struct dvb_frontend *fe, bool re_tune,
+ 		state->tune_time = jiffies;
+ 		return 0;
+ 	}
+-	if (*status & FE_HAS_LOCK)
+-		return 0;
+ 
+ 	r = read_status(fe, status);
+ 	if (r)
+ 		return r;
+ 
++	if (*status & FE_HAS_LOCK)
++		return 0;
++
+ 	return 0;
+ }
+ 
+-- 
+2.13.0
+

@@ -1,0 +1,37 @@
+From a630aa91a1b8d2767b8ed930fe315dfd8500a596 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Wed, 26 Jul 2017 19:03:53 +0200
+Subject: [PATCH 1/2] [media] dvb-frontends/stv0910: fix FE_HAS_LOCK check
+ order in tune()
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0910.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/stv0910.c b/drivers/media/dvb-frontends/stv0910.c
+index a2648dd91a57..fe25b1778555 100644
+--- a/drivers/media/dvb-frontends/stv0910.c
++++ b/drivers/media/dvb-frontends/stv0910.c
+@@ -1581,13 +1581,15 @@ static int tune(struct dvb_frontend *fe, bool re_tune,
+ 			return r;
+ 		state->tune_time = jiffies;
+ 	}
+-	if (*status & FE_HAS_LOCK)
+-		return 0;
+-	*delay = HZ;
+ 
+ 	r = read_status(fe, status);
+ 	if (r)
+ 		return r;
++
++	if (*status & FE_HAS_LOCK)
++		return 0;
++	*delay = HZ;
++
+ 	return 0;
+ }
+ 
+-- 
+2.13.0
+
