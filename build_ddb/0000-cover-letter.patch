@@ -1,0 +1,27 @@
+From 53eeb0ba232720f82389f5d05fd9b16061741f84 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 20 Aug 2017 16:00:01 +0200
+Subject: [PATCH 0/3] media_build: fixes wrt the ddbridge code bump
+
+Hans,
+
+these are the patches I've carried around in my media_build fork wrt
+ddbridge testing, which obviously should go into upstream, now that
+the patches got merged. Things worked pretty well at least up to
+(down to) Kernel 3.13 on Ubuntu Trusty, guess some more things need
+to be added for even older kernels, but your daily build will probably
+tell :) Verified myself against 4.4 (Ubuntu Xenial).
+
+Daniel Scheller (3):
+  [media_build] fix pr_fmt patch wrt the ddbridge code bump
+  [media_build] patch pci_alloc_irq_vectors() for ddbridge aswell
+  [media_build] add compat for __GFP_RETRY_MAYFAIL
+
+ backports/pr_fmt.patch                     |  6 +++---
+ backports/v4.7_pci_alloc_irq_vectors.patch | 13 +++++++++++++
+ v4l/compat.h                               |  4 ++++
+ 3 files changed, 20 insertions(+), 3 deletions(-)
+
+-- 
+2.13.0
+

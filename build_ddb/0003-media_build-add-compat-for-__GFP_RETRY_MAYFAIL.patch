@@ -1,0 +1,30 @@
+From 53eeb0ba232720f82389f5d05fd9b16061741f84 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 23 Jul 2017 14:36:30 +0200
+Subject: [PATCH 3/3] [media_build] add compat for __GFP_RETRY_MAYFAIL
+
+required for building ddbridge on <4.13-rc1 wrt
+
+  commit dcda9b04713c ("mm, tree wide: replace __GFP_REPEAT by __GFP_RETRY_MAYFAIL with more useful semantic")
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ v4l/compat.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/v4l/compat.h b/v4l/compat.h
+index b5b0846..a28ce76 100644
+--- a/v4l/compat.h
++++ b/v4l/compat.h
+@@ -2099,4 +2099,8 @@ static inline int pm_runtime_get_if_in_use(struct device *dev)
+ }
+ #endif
+ 
++#ifndef __GFP_RETRY_MAYFAIL
++#define __GFP_RETRY_MAYFAIL __GFP_REPEAT
++#endif
++
+ #endif /*  _COMPAT_H */
+-- 
+2.13.0
+
