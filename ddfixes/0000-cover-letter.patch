@@ -1,0 +1,46 @@
+From 01939652db693c6f4fcd5debc75ff477ef4973ed Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Wed, 23 Aug 2017 17:59:24 +0200
+Subject: [PATCH 0/5] last-minute misc ddbridge related changed
+
+This small series improves on a few things related to the recently merged
+ddbridge driver update:
+
+stv0910:
+  * add an explanation for the mutex_lock needs in gate_ctrl() and release
+    the lock in case of I2C ctrl errors
+  * announce 100Ksyms/s as minimum symbol rate
+ddbridge:
+  * fix the teardown and deregistration order wrt the i2c_client usage
+  * fix most warnings reported by sparse (sparse still reports four
+    spinlock/context warnings, that code will be kept as-is - there
+    won't be locking problems since the checked pointers won't suddenly
+    vanish)
+staging/cxd2099:
+  * disable buffer mode by default and make that controllable by a module
+    parameter (suggested, requested and tested by Jasmin, modparm switch
+    done by me)
+
+Please pull these patches in for the 4.14 merge window, together with the
+two ([1], [2]) remaining ones on patchwork - thank you very much!
+
+[1] https://patchwork.linuxtv.org/patch/43350/
+[2] https://patchwork.linuxtv.org/patch/43202/
+
+Daniel Scheller (5):
+  [media] dvb-frontends/stv0910: release lock on gate_ctrl() failure
+  [media] ddbridge: fix teardown/deregistration order in
+    ddb_input_detach()
+  [media] ddbridge: fix sparse warnings
+  [media] staging/cxd2099: Add module parameter for buffer mode
+  [media] dvb-frontends/stv0910: change minsymrate to 100Ksyms/s
+
+ drivers/media/dvb-frontends/stv0910.c      | 27 +++++++++++++++++-----
+ drivers/media/pci/ddbridge/ddbridge-core.c | 37 +++++++++++++++---------------
+ drivers/media/pci/ddbridge/ddbridge-io.h   | 12 +++++-----
+ drivers/staging/media/cxd2099/cxd2099.c    | 21 +++++++++--------
+ 4 files changed, 57 insertions(+), 40 deletions(-)
+
+-- 
+2.13.0
+

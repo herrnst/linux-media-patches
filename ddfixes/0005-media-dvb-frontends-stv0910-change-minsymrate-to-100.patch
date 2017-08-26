@@ -1,0 +1,34 @@
+From 01939652db693c6f4fcd5debc75ff477ef4973ed Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Wed, 23 Aug 2017 17:40:15 +0200
+Subject: [PATCH 5/5] [media] dvb-frontends/stv0910: change minsymrate to
+ 100Ksyms/s
+
+The demodulator supports symbol rates as low as 100Ksyms/s - the demod
+setup in start() already handles such low symbol rates and reviewers
+of stv0910 equipped cards even found and tested transponders with
+SRs in that range. So, announce this in the fe_ops.
+
+Cc: Ralph Metzler <rjkm@metzlerbros.de>
+Cc: Richard Scobie <r.scobie@clear.net.nz>
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0910.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/dvb-frontends/stv0910.c b/drivers/media/dvb-frontends/stv0910.c
+index 0d4a6a115159..8bf855c301f5 100644
+--- a/drivers/media/dvb-frontends/stv0910.c
++++ b/drivers/media/dvb-frontends/stv0910.c
+@@ -1698,7 +1698,7 @@ static const struct dvb_frontend_ops stv0910_ops = {
+ 		.frequency_max		= 2150000,
+ 		.frequency_stepsize	= 0,
+ 		.frequency_tolerance	= 0,
+-		.symbol_rate_min	= 1000000,
++		.symbol_rate_min	= 100000,
+ 		.symbol_rate_max	= 70000000,
+ 		.caps			= FE_CAN_INVERSION_AUTO |
+ 					  FE_CAN_FEC_AUTO       |
+-- 
+2.13.0
+
