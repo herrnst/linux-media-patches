@@ -1,0 +1,30 @@
+From 0730e2a3738ac66c73556ed0f3b88e2ee1a1bedb Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Fri, 1 Sep 2017 21:38:34 +0200
+Subject: [PATCH] [media] dvb-frontends/mxl5xx: declare LIST_HEAD(mxllist)
+ static
+
+Fixes one sparse warning:
+  mxl5xx.c:46:1: warning: symbol 'mxllist' was not declared. Should it be static?
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/mxl5xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/dvb-frontends/mxl5xx.c b/drivers/media/dvb-frontends/mxl5xx.c
+index 676c96c216c3..53064e11f5f1 100644
+--- a/drivers/media/dvb-frontends/mxl5xx.c
++++ b/drivers/media/dvb-frontends/mxl5xx.c
+@@ -43,7 +43,7 @@
+ #define BYTE2(v) ((v >> 16) & 0xff)
+ #define BYTE3(v) ((v >> 24) & 0xff)
+ 
+-LIST_HEAD(mxllist);
++static LIST_HEAD(mxllist);
+ 
+ struct mxl_base {
+ 	struct list_head     mxllist;
+-- 
+2.13.5
+
