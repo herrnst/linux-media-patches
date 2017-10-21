@@ -1,0 +1,40 @@
+From 9c8dffb7ed236e530392e31f7eefa7833440af44 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 15 Oct 2017 19:17:07 +0200
+Subject: [PATCH 7/8] [media] stv0910: read and update mod_cod in read_status()
+
+Add missing state->modcod update from upstream driver which needs to be
+done when manage_matype_info() sets is_vcm on certain S2 transponders.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0910.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/media/dvb-frontends/stv0910.c b/drivers/media/dvb-frontends/stv0910.c
+index 8bf855c301f5..73f6df0abbfe 100644
+--- a/drivers/media/dvb-frontends/stv0910.c
++++ b/drivers/media/dvb-frontends/stv0910.c
+@@ -1498,6 +1498,19 @@ static int read_status(struct dvb_frontend *fe, enum fe_status *status)
+ 				enable_puncture_rate(state,
+ 						     state->puncture_rate);
+ 		}
++
++		/* Use highest signaled ModCod for quality */
++		if (state->is_vcm) {
++			u8 tmp;
++			enum fe_stv0910_mod_cod mod_cod;
++
++			read_reg(state, RSTV0910_P2_DMDMODCOD + state->regoff,
++				 &tmp);
++			mod_cod = (enum fe_stv0910_mod_cod)((tmp & 0x7c) >> 2);
++
++			if (mod_cod > state->mod_cod)
++				state->mod_cod = mod_cod;
++		}
+ 	}
+ 
+ 	/* read signal statistics */
+-- 
+2.13.6
+

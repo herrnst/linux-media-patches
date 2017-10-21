@@ -1,0 +1,28 @@
+From 267c943d3f2fb597c9f40f778304df34adc97ba4 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 15 Oct 2017 19:24:05 +0200
+Subject: [PATCH 8/8] [media] ddbridge: update driver version number
+
+Update the driver version number/string to 0.9.32-integrated.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge.h b/drivers/media/pci/ddbridge/ddbridge.h
+index e8432e49564c..70ac9e576c74 100644
+--- a/drivers/media/pci/ddbridge/ddbridge.h
++++ b/drivers/media/pci/ddbridge/ddbridge.h
+@@ -63,7 +63,7 @@
+ #include "dvb_ca_en50221.h"
+ #include "dvb_net.h"
+ 
+-#define DDBRIDGE_VERSION "0.9.31intermediate-integrated"
++#define DDBRIDGE_VERSION "0.9.32-integrated"
+ 
+ #define DDB_MAX_I2C    32
+ #define DDB_MAX_PORT   32
+-- 
+2.13.6
+
