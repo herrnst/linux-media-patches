@@ -1,0 +1,36 @@
+From 0d2d870ffd4981138d89809c93b8e5bcc95f8f4a Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Thu, 16 Nov 2017 21:33:21 +0100
+Subject: [PATCH 6/7] [media] dvb-frontends/stv0910: remove unneeded symbol
+ rate inquiry
+
+tracking_optimization() doesn't make use of the symbol rate reported by
+the demodulator, so remove the unneeded inquiry and the now unneeded
+variable.
+
+Reported-by: Richard Scobie <rascobie@slingshot.co.nz>
+Cc: Ralph Metzler <rjkm@metzlerbros.de>
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+Tested-by: Richard Scobie <rascobie@slingshot.co.nz>
+---
+ drivers/media/dvb-frontends/stv0910.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/stv0910.c b/drivers/media/dvb-frontends/stv0910.c
+index e9517e11b399..de8702fcffbd 100644
+--- a/drivers/media/dvb-frontends/stv0910.c
++++ b/drivers/media/dvb-frontends/stv0910.c
+@@ -533,10 +533,8 @@ static int get_signal_parameters(struct stv *state)
+ 
+ static int tracking_optimization(struct stv *state)
+ {
+-	u32 symbol_rate = 0;
+ 	u8 tmp;
+ 
+-	get_cur_symbol_rate(state, &symbol_rate);
+ 	read_reg(state, RSTV0910_P2_DMDCFGMD + state->regoff, &tmp);
+ 	tmp &= ~0xC0;
+ 
+-- 
+2.13.6
+

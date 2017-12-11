@@ -1,0 +1,36 @@
+From 8cc092160ed5b829ac6b3a2a9b52e422179ac70e Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Thu, 24 Aug 2017 22:36:51 +0200
+Subject: [PATCH 2/2] [media] ddbridge: don't break on single/last port attach
+ failure
+
+As all error handling improved quite a bit, don't stop attaching frontends
+if one of them failed, since - if other tuner modules are connected to
+the PCIe bridge - other hardware may just work, so lets not break on a
+single port failure, but rather initialise as much as possible. Ie. if
+there are issues with a C2T2-equipped PCIe bridge card which has
+additional DuoFlex modules connected and the bridge generally works,
+the DuoFlex tuners can still work fine. Also, this only had an effect
+anyway if the failed device/port was the last one being enumerated.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index 11c5cae92408..b43c40e0bf73 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -1962,7 +1962,7 @@ int ddb_ports_attach(struct ddb *dev)
+ 	}
+ 	for (i = 0; i < dev->port_num; i++) {
+ 		port = &dev->port[i];
+-		ret = ddb_port_attach(port);
++		ddb_port_attach(port);
+ 	}
+ 	return ret;
+ }
+-- 
+2.13.6
+

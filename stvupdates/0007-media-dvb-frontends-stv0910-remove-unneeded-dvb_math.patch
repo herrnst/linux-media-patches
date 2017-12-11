@@ -1,0 +1,28 @@
+From 4e12f772766f930be75c086362dc9f13c10710a0 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sat, 18 Nov 2017 17:17:44 +0100
+Subject: [PATCH 7/7] [media] dvb-frontends/stv0910: remove unneeded dvb_math.h
+ include
+
+Since nothing from dvb_math.h is used, remove the unneeded include.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0910.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/media/dvb-frontends/stv0910.c b/drivers/media/dvb-frontends/stv0910.c
+index de8702fcffbd..618d70683559 100644
+--- a/drivers/media/dvb-frontends/stv0910.c
++++ b/drivers/media/dvb-frontends/stv0910.c
+@@ -24,7 +24,6 @@
+ #include <linux/i2c.h>
+ #include <asm/div64.h>
+ 
+-#include "dvb_math.h"
+ #include "dvb_frontend.h"
+ #include "stv0910.h"
+ #include "stv0910_regs.h"
+-- 
+2.13.6
+
