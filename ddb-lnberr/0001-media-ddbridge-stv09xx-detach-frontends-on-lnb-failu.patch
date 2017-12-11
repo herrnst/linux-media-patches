@@ -1,0 +1,46 @@
+From b28f756744e214652e2a7abd126fd70598520876 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 10 Dec 2017 20:32:24 +0100
+Subject: [PATCH] [media] ddbridge: stv09xx: detach frontends on lnb failure
+
+While the failure handling in dvb_input_attach() has been improved lately
+so any tuner failure won't result in demod driver modules with a
+usecount > 0 anymore (thus requiring rmmod -f), there's still an issue
+with stv090x and stv0910 based tuner modules, in that LNB driver attach
+failures leave an attached demod frontend driver behind which have a
+usecount of > 0 in this failure case, due to them not being detached/
+released. Fix this by detaching the demod frontends if the LNB driver
+fails.
+
+Richard tested and verified the changes with STV0910 hardware, thus adding
+his Tested-by.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+Tested-by: Richard Scobie <rascobie@slingshot.co.nz>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index 348cc8b3d1f9..f4d6e43aa0f0 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -1114,6 +1114,7 @@ static int demod_attach_stv0900(struct ddb_input *input, int type)
+ 			0, (input->nr & 1) ?
+ 			(0x09 - type) : (0x0b - type))) {
+ 		dev_err(dev, "No LNBH24 found!\n");
++		dvb_frontend_detach(dvb->fe);
+ 		return -ENODEV;
+ 	}
+ 	return 0;
+@@ -1196,6 +1197,7 @@ static int demod_attach_stv0910(struct ddb_input *input, int type)
+ 		lnbcfg.i2c_address = (((input->nr & 1) ? 0x09 : 0x08) << 1);
+ 		if (!dvb_attach(lnbh25_attach, dvb->fe, &lnbcfg, i2c)) {
+ 			dev_err(dev, "No LNBH25 found!\n");
++			dvb_frontend_detach(dvb->fe);
+ 			return -ENODEV;
+ 		}
+ 	}
+-- 
+2.13.6
+
