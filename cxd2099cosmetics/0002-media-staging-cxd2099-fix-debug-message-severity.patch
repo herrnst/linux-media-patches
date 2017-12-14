@@ -1,0 +1,30 @@
+From aa98138c91ec7b3be50e39001a5f6b6b69262e1f Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Thu, 16 Nov 2017 22:22:37 +0100
+Subject: [PATCH 2/3] [media] staging/cxd2099: fix debug message severity
+
+Debug messages should go to KERN_DEBUG, thus change the slot_shutdown()
+notice from dev_info() to dev_dbg().
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+Signed-off-by: Jasmin Jessich <jasmin@anw.at>
+---
+ drivers/staging/media/cxd2099/cxd2099.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/media/cxd2099/cxd2099.c b/drivers/staging/media/cxd2099/cxd2099.c
+index 21b1c6fcf9bf..38d43647d4bf 100644
+--- a/drivers/staging/media/cxd2099/cxd2099.c
++++ b/drivers/staging/media/cxd2099/cxd2099.c
+@@ -518,7 +518,7 @@ static int slot_shutdown(struct dvb_ca_en50221 *ca, int slot)
+ {
+ 	struct cxd *ci = ca->data;
+ 
+-	dev_info(&ci->i2c->dev, "%s\n", __func__);
++	dev_dbg(&ci->i2c->dev, "%s\n", __func__);
+ 	if (ci->cammode)
+ 		read_data(ca, slot, ci->rbuf, 0);
+ 	mutex_lock(&ci->lock);
+-- 
+2.13.6
+

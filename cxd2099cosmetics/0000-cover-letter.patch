@@ -1,0 +1,30 @@
+From f4cecc3449d7d1b7f088827f0d2d9e92301918d3 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Tue, 12 Dec 2017 19:33:39 +0100
+Subject: [PATCH 0/3] staging/cxd2099: cosmetics, checkpatch fixup
+
+These three small patches make the driver checkpatch-strict clean and
+improves a few strings. No functional changes.
+
+Essentially drivers/staging/media/cxd2099/ is now clean, esp.:
+
+$ scripts/checkpatch.pl --strict --file drivers/staging/media/cxd2099/cxd2099.c
+  total: 0 errors, 0 warnings, 0 checks, 705 lines checked
+
+$ scripts/checkpatch.pl --strict --file drivers/staging/media/cxd2099/cxd2099.h
+  total: 0 errors, 0 warnings, 0 checks, 45 lines checked
+
+The three patches are the outcome of some bigger refactoring WIP.
+
+Daniel Scheller (3):
+  [media] staging/cxd2099: fix remaining checkpatch-strict issues
+  [media] staging/cxd2099: fix debug message severity
+  [media] staging/cxd2099: cosmetics: improve strings
+
+ drivers/staging/media/cxd2099/cxd2099.c | 30 +++++++++++-------------------
+ drivers/staging/media/cxd2099/cxd2099.h | 14 +++-----------
+ 2 files changed, 14 insertions(+), 30 deletions(-)
+
+-- 
+2.13.6
+
