@@ -1,0 +1,34 @@
+From d634c41856d7218bef908a79d5bbf6fb1e8aaa11 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Thu, 14 Dec 2017 22:34:34 +0100
+Subject: [PATCH 2/8] [media] ddbridge: fix resources cleanup for CI hardware
+
+Do kfree() on port->en->data instead of port->en. port->en only holds a
+ptr to a struct dvb_ca_en50221, which is a member either of a memalloc'ed
+struct ddb_ci (DuoFlex CI, Octopus CI Duo) or a struct cxd (CXD2099AR
+based Single Flex, allocated by the cxd2099 driver). port->en.data
+though holds the ptr to the allocated memory, which must rather be
+kfree()'d. Change this accordingly.
+
+Cc: Ralph Metzler <rjkm@metzlerbros.de>
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index eda004398316..a81125d492ff 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -1990,7 +1990,7 @@ void ddb_ports_detach(struct ddb *dev)
+ 				dvb_unregister_device(port->dvb[0].dev);
+ 			if (port->en) {
+ 				dvb_ca_en50221_release(port->en);
+-				kfree(port->en);
++				kfree(port->en->data);
+ 				port->en = NULL;
+ 			}
+ 			break;
+-- 
+2.13.6
+

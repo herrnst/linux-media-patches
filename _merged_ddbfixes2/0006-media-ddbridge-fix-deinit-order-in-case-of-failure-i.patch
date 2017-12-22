@@ -1,0 +1,50 @@
+From 32aaa9d2d139e2134c51d3554d9a8d99687d92dd Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Fri, 15 Dec 2017 22:32:55 +0100
+Subject: [PATCH 6/8] [media] ddbridge: fix deinit order in case of failure in
+ ddb_init()
+
+In ddb_init(), the deinitialization sequence isn't correct when handling
+errors, and could even lead to a memleak depending on where things failed.
+Fix the deinit order.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index 07f3e37a0fca..548b7047ca09 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -3273,7 +3273,7 @@ int ddb_init(struct ddb *dev)
+ 	ddb_init_boards(dev);
+ 
+ 	if (ddb_i2c_init(dev) < 0)
+-		goto fail;
++		goto fail1;
+ 	ddb_ports_init(dev);
+ 	if (ddb_buffers_alloc(dev) < 0) {
+ 		dev_info(dev->dev, "Could not allocate buffer memory\n");
+@@ -3291,14 +3291,14 @@ int ddb_init(struct ddb *dev)
+ 	return 0;
+ 
+ fail3:
+-	ddb_ports_detach(dev);
+ 	dev_err(dev->dev, "fail3\n");
+-	ddb_ports_release(dev);
++	ddb_ports_detach(dev);
++	ddb_buffers_free(dev);
+ fail2:
+ 	dev_err(dev->dev, "fail2\n");
+-	ddb_buffers_free(dev);
++	ddb_ports_release(dev);
+ 	ddb_i2c_release(dev);
+-fail:
++fail1:
+ 	dev_err(dev->dev, "fail1\n");
+ 	return -1;
+ }
+-- 
+2.13.6
+

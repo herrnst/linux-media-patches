@@ -1,0 +1,35 @@
+From 895bec7c1a3a2976d5336c9354f693d05b7c97a0 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Fri, 15 Dec 2017 22:24:08 +0100
+Subject: [PATCH 7/8] [media] ddbridge: detach first input if the second one
+ failed to init
+
+In ddb_ports_attach(), if the second input of a dual tuner failed to
+initialise, the first one can be detached (and resources be freed) as
+this will be counted as the whole port having failed to initialise,
+thus the first one won't be used anyway.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index 548b7047ca09..940371067346 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -1935,8 +1935,10 @@ static int ddb_port_attach(struct ddb_port *port)
+ 		if (ret < 0)
+ 			break;
+ 		ret = dvb_input_attach(port->input[1]);
+-		if (ret < 0)
++		if (ret < 0) {
++			dvb_input_detach(port->input[0]);
+ 			break;
++		}
+ 		port->input[0]->redi = port->input[0];
+ 		port->input[1]->redi = port->input[1];
+ 		break;
+-- 
+2.13.6
+

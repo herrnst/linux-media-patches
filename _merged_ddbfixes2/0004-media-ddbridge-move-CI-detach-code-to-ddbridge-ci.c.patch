@@ -1,0 +1,68 @@
+From c80508ea47c43f83e787a07cc7c9946b09864776 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Fri, 15 Dec 2017 18:23:50 +0100
+Subject: [PATCH 4/8] [media] ddbridge: move CI detach code to ddbridge-ci.c
+
+Move the CI teardown code to ddbridge-ci.c where everything else related
+to CI hardware lives.
+
+Cc: Ralph Metzler <rjkm@metzlerbros.de>
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-ci.c   | 11 +++++++++++
+ drivers/media/pci/ddbridge/ddbridge-ci.h   |  1 +
+ drivers/media/pci/ddbridge/ddbridge-core.c |  8 +-------
+ 3 files changed, 13 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-ci.c b/drivers/media/pci/ddbridge/ddbridge-ci.c
+index 8dfbc3bbd86d..5828111487b0 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-ci.c
++++ b/drivers/media/pci/ddbridge/ddbridge-ci.c
+@@ -346,3 +346,14 @@ int ddb_ci_attach(struct ddb_port *port, u32 bitrate)
+ 	dvb_ca_en50221_init(port->dvb[0].adap, port->en, 0, 1);
+ 	return 0;
+ }
++
++void ddb_ci_detach(struct ddb_port *port)
++{
++	if (port->dvb[0].dev)
++		dvb_unregister_device(port->dvb[0].dev);
++	if (port->en) {
++		dvb_ca_en50221_release(port->en);
++		kfree(port->en->data);
++		port->en = NULL;
++	}
++}
+diff --git a/drivers/media/pci/ddbridge/ddbridge-ci.h b/drivers/media/pci/ddbridge/ddbridge-ci.h
+index 3a5d7ffab7b7..35a39182dd83 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-ci.h
++++ b/drivers/media/pci/ddbridge/ddbridge-ci.h
+@@ -26,5 +26,6 @@
+ /******************************************************************************/
+ 
+ int ddb_ci_attach(struct ddb_port *port, u32 bitrate);
++void ddb_ci_detach(struct ddb_port *port);
+ 
+ #endif /* __DDBRIDGE_CI_H__ */
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index a81125d492ff..c2f028152388 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -1986,13 +1986,7 @@ void ddb_ports_detach(struct ddb *dev)
+ 			break;
+ 		case DDB_PORT_CI:
+ 		case DDB_PORT_LOOP:
+-			if (port->dvb[0].dev)
+-				dvb_unregister_device(port->dvb[0].dev);
+-			if (port->en) {
+-				dvb_ca_en50221_release(port->en);
+-				kfree(port->en->data);
+-				port->en = NULL;
+-			}
++			ddb_ci_detach(port);
+ 			break;
+ 		}
+ 	}
+-- 
+2.13.6
+
