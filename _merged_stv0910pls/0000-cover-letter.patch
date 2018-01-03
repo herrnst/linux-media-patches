@@ -1,0 +1,27 @@
+From f3f93ae7a46afd50a45eb36fbb2b73b5d3afa554 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Wed, 27 Dec 2017 00:29:16 +0100
+Subject: [PATCH 0/4] stv0910: upstream changes and PLS support
+
+This series basically is meant to fully enable support for physical
+layer scrambling which is now supported by the DVB core. Though I
+decided to pick up the latest changes to the driver from the dddvb
+upstream and bring both drivers in sync. So, along with support for
+PLS, these patches apply some cosmetics and cleanups, adds macros to
+utilise the field definitions for which the offsets were added
+recently, and makes use of them while finally enabling PLS.
+
+Daniel Scheller (4):
+  [media] dvb-frontends/stv0910: deduplicate writes in
+    enable_puncture_rate()
+  [media] dvb-frontends/stv0910: cleanup I2C access functions
+  [media] dvb-frontends/stv0910: field and register access helpers
+  [media] dvb-frontends/stv0910: cleanup init_search_param() and enable
+    PLS
+
+ drivers/media/dvb-frontends/stv0910.c | 195 ++++++++++++++++++----------------
+ 1 file changed, 103 insertions(+), 92 deletions(-)
+
+-- 
+2.13.6
+
