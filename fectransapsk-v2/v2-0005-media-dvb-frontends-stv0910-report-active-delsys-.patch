@@ -1,0 +1,38 @@
+From d45f57bb61bac4442b2dcff4410dcc130b5dc747 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Fri, 19 Jan 2018 23:39:35 +0100
+Subject: [PATCH v2 5/5] media: dvb-frontends/stv0910: report active delsys in
+ get_frontend()
+
+Report the active delivery system based on the receive_mode state of the
+demodulator.
+
+Suggested-by: Richard Scobie <rascobie@slingshot.co.nz>
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0910.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/media/dvb-frontends/stv0910.c b/drivers/media/dvb-frontends/stv0910.c
+index 7ab014cec56c..6e6a70ad7354 100644
+--- a/drivers/media/dvb-frontends/stv0910.c
++++ b/drivers/media/dvb-frontends/stv0910.c
+@@ -1580,6 +1580,7 @@ static int get_frontend(struct dvb_frontend *fe,
+ 		p->modulation = modcod2mod[mc];
+ 		p->fec_inner = modcod2fec[mc];
+ 		p->rolloff = ro2ro[state->fe_rolloff];
++		p->delivery_system = SYS_DVBS2;
+ 	} else if (state->receive_mode == RCVMODE_DVBS) {
+ 		read_reg(state, RSTV0910_P2_VITCURPUN + state->regoff, &tmp);
+ 		switch (tmp & 0x1F) {
+@@ -1603,6 +1604,7 @@ static int get_frontend(struct dvb_frontend *fe,
+ 			break;
+ 		}
+ 		p->rolloff = ROLLOFF_35;
++		p->delivery_system = SYS_DVBS;
+ 	}
+ 
+ 	if (state->receive_mode != RCVMODE_NONE) {
+-- 
+2.13.6
+

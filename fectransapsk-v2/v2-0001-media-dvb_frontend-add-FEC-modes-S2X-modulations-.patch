@@ -1,0 +1,108 @@
+From 44fa14bca3e7ca283e9cab803074a8c6e0592637 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Thu, 21 Dec 2017 20:16:14 +0100
+Subject: [PATCH v2 1/5] media: dvb_frontend: add FEC modes, S2X modulations
+ and 64K transmission
+
+Add 1/4 and 1/3 FEC ratios, 64/128/256-APSK S2X modulations and 64K
+transmission mode. Update relevant doc items aswell.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ Documentation/media/frontend.h.rst.exceptions |  6 ++++++
+ include/uapi/linux/dvb/frontend.h             | 13 +++++++++++++
+ 2 files changed, 19 insertions(+)
+
+diff --git a/Documentation/media/frontend.h.rst.exceptions b/Documentation/media/frontend.h.rst.exceptions
+index f7c4df620a52..ae1148be0a39 100644
+--- a/Documentation/media/frontend.h.rst.exceptions
++++ b/Documentation/media/frontend.h.rst.exceptions
+@@ -84,6 +84,9 @@ ignore symbol APSK_16
+ ignore symbol APSK_32
+ ignore symbol DQPSK
+ ignore symbol QAM_4_NR
++ignore symbol APSK_64
++ignore symbol APSK_128
++ignore symbol APSK_256
+ 
+ ignore symbol SEC_VOLTAGE_13
+ ignore symbol SEC_VOLTAGE_18
+@@ -117,6 +120,8 @@ ignore symbol FEC_AUTO
+ ignore symbol FEC_3_5
+ ignore symbol FEC_9_10
+ ignore symbol FEC_2_5
++ignore symbol FEC_1_4
++ignore symbol FEC_1_3
+ 
+ ignore symbol TRANSMISSION_MODE_AUTO
+ ignore symbol TRANSMISSION_MODE_1K
+@@ -129,6 +134,7 @@ ignore symbol TRANSMISSION_MODE_C1
+ ignore symbol TRANSMISSION_MODE_C3780
+ ignore symbol TRANSMISSION_MODE_2K
+ ignore symbol TRANSMISSION_MODE_8K
++ignore symbol TRANSMISSION_MODE_64K
+ 
+ ignore symbol GUARD_INTERVAL_AUTO
+ ignore symbol GUARD_INTERVAL_1_128
+diff --git a/include/uapi/linux/dvb/frontend.h b/include/uapi/linux/dvb/frontend.h
+index 4f9b4551c534..227268a657cd 100644
+--- a/include/uapi/linux/dvb/frontend.h
++++ b/include/uapi/linux/dvb/frontend.h
+@@ -296,6 +296,8 @@ enum fe_spectral_inversion {
+  * @FEC_3_5:  Forward Error Correction Code 3/5
+  * @FEC_9_10: Forward Error Correction Code 9/10
+  * @FEC_2_5:  Forward Error Correction Code 2/5
++ * @FEC_1_4:  Forward Error Correction Code 1/4
++ * @FEC_1_3:  Forward Error Correction Code 1/3
+  *
+  * Please note that not all FEC types are supported by a given standard.
+  */
+@@ -313,6 +315,8 @@ enum fe_code_rate {
+ 	FEC_3_5,
+ 	FEC_9_10,
+ 	FEC_2_5,
++	FEC_1_4,
++	FEC_1_3,
+ };
+ 
+ /**
+@@ -331,6 +335,9 @@ enum fe_code_rate {
+  * @APSK_32:	32-APSK modulation
+  * @DQPSK:	DQPSK modulation
+  * @QAM_4_NR:	4-QAM-NR modulation
++ * @APSK_64:	64-APSK modulation
++ * @APSK_128:	128-APSK modulation
++ * @APSK_256:	256-APSK modulation
+  *
+  * Please note that not all modulations are supported by a given standard.
+  *
+@@ -350,6 +357,9 @@ enum fe_modulation {
+ 	APSK_32,
+ 	DQPSK,
+ 	QAM_4_NR,
++	APSK_64,
++	APSK_128,
++	APSK_256,
+ };
+ 
+ /**
+@@ -374,6 +384,8 @@ enum fe_modulation {
+  *	Single Carrier (C=1) transmission mode (DTMB only)
+  * @TRANSMISSION_MODE_C3780:
+  *	Multi Carrier (C=3780) transmission mode (DTMB only)
++ * @TRANSMISSION_MODE_64K:
++ *	Transmission mode 64K
+  *
+  * Please note that not all transmission modes are supported by a given
+  * standard.
+@@ -388,6 +400,7 @@ enum fe_transmit_mode {
+ 	TRANSMISSION_MODE_32K,
+ 	TRANSMISSION_MODE_C1,
+ 	TRANSMISSION_MODE_C3780,
++	TRANSMISSION_MODE_64K,
+ };
+ 
+ /**
+-- 
+2.13.6
+
