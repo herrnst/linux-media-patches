@@ -1,0 +1,46 @@
+From 084c5ea6e1ddb3b0f86ccf7d00370ec31dd46894 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 19 Nov 2017 18:29:35 +0100
+Subject: [PATCH v2 5/7] [media] staging/cxd2099: remove remainders from old
+ attach way
+
+As all drivers using the cxd2099 are converted to handle attach/detach
+the generic I2C client way, the static inline cxd2099_attach isn't
+required anymore. Thus cleanup cxd2099.h from the remainders, the adr
+struct member isn't used anymore aswell.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+Signed-off-by: Jasmin Jessich <jasmin@anw.at>
+---
+ drivers/staging/media/cxd2099/cxd2099.h | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/drivers/staging/media/cxd2099/cxd2099.h b/drivers/staging/media/cxd2099/cxd2099.h
+index 679e87512799..8fa45a4c615a 100644
+--- a/drivers/staging/media/cxd2099/cxd2099.h
++++ b/drivers/staging/media/cxd2099/cxd2099.h
+@@ -20,7 +20,6 @@
+ 
+ struct cxd2099_cfg {
+ 	u32 bitrate;
+-	u8  adr;
+ 	u8  polarity;
+ 	u8  clock_mode;
+ 
+@@ -30,13 +29,4 @@ struct cxd2099_cfg {
+ 	struct dvb_ca_en50221 **en;
+ };
+ 
+-/* TODO: remove when done */
+-static inline struct
+-dvb_ca_en50221 *cxd2099_attach(struct cxd2099_cfg *cfg, void *priv,
+-			       struct i2c_adapter *i2c)
+-{
+-	dev_warn(&i2c->dev, "%s: driver disabled by Kconfig\n", __func__);
+-	return NULL;
+-}
+-
+ #endif
+-- 
+2.13.6
+
