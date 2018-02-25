@@ -1,0 +1,74 @@
+From fa5ed9caf1e1342212f7805d3293bcb6c36ecf9c Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 25 Feb 2018 16:43:07 +0100
+Subject: [PATCH] [media] ngene: add proper polling to the dvbdev_ci file ops
+
+Implement the poll callback for the dvbdev_ci file ops. The ts_poll()
+function queries the DVB ring buffers for available data and space, and
+reports this as appropriate. Also, set the dvb_device readers, writers
+and users to proper values (one reader, one writer, two users).
+
+This fixes the raw CI TS transport in conjunction with TVheadend's
+DDCI functionality.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+This patch was committed ontop of the ngene hardware/tsfix series, so it
+might conflict if that series isn't applied beforehand (I honestly didn't
+test that).
+
+ drivers/media/pci/ngene/ngene-dvb.c | 29 ++++++++++++++++++++++++++---
+ 1 file changed, 26 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/pci/ngene/ngene-dvb.c b/drivers/media/pci/ngene/ngene-dvb.c
+index 0f9759a4d124..2df641e05fca 100644
+--- a/drivers/media/pci/ngene/ngene-dvb.c
++++ b/drivers/media/pci/ngene/ngene-dvb.c
+@@ -87,18 +87,41 @@ static ssize_t ts_read(struct file *file, char __user *buf,
+ 	return count;
+ }
+ 
++static __poll_t ts_poll(struct file *file, poll_table *wait)
++{
++	struct dvb_device *dvbdev = file->private_data;
++	struct ngene_channel *chan = dvbdev->priv;
++	struct ngene *dev = chan->dev;
++	struct dvb_ringbuffer *rbuf = &dev->tsin_rbuf;
++	struct dvb_ringbuffer *wbuf = &dev->tsout_rbuf;
++	__poll_t mask = 0;
++
++	poll_wait(file, &rbuf->queue, wait);
++	poll_wait(file, &wbuf->queue, wait);
++
++	if (!dvb_ringbuffer_empty(rbuf))
++		mask |= EPOLLIN | EPOLLRDNORM;
++	if (dvb_ringbuffer_free(wbuf) >= 188)
++		mask |= EPOLLOUT | EPOLLWRNORM;
++
++	return mask;
++}
++
+ static const struct file_operations ci_fops = {
+ 	.owner   = THIS_MODULE,
+ 	.read    = ts_read,
+ 	.write   = ts_write,
+ 	.open    = dvb_generic_open,
+ 	.release = dvb_generic_release,
++	.poll    = ts_poll,
++	.mmap    = NULL,
+ };
+ 
+ struct dvb_device ngene_dvbdev_ci = {
+-	.readers = -1,
+-	.writers = -1,
+-	.users   = -1,
++	.priv    = NULL,
++	.readers = 1,
++	.writers = 1,
++	.users   = 2,
+ 	.fops    = &ci_fops,
+ };
+ 
+-- 
+2.16.1
+
