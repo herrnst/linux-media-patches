@@ -1,0 +1,28 @@
+From a797a863ddeef49e967dbdc27f32484b4424e4fb Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sat, 17 Feb 2018 16:24:22 +0100
+Subject: [PATCH 01/12] [media] ngene: add two additional PCI IDs
+
+Add two more device IDs for cards supported by the ngene driver.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ngene/ngene-cards.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/media/pci/ngene/ngene-cards.c b/drivers/media/pci/ngene/ngene-cards.c
+index bb49620540c5..49f78bb31537 100644
+--- a/drivers/media/pci/ngene/ngene-cards.c
++++ b/drivers/media/pci/ngene/ngene-cards.c
+@@ -749,6 +749,8 @@ static const struct ngene_info ngene_info_terratec = {
+ /****************************************************************************/
+ 
+ static const struct pci_device_id ngene_id_tbl[] = {
++	NGENE_ID(0x18c3, 0xab04, ngene_info_cineS2),
++	NGENE_ID(0x18c3, 0xab05, ngene_info_cineS2v5),
+ 	NGENE_ID(0x18c3, 0xabc3, ngene_info_cineS2),
+ 	NGENE_ID(0x18c3, 0xabc4, ngene_info_cineS2),
+ 	NGENE_ID(0x18c3, 0xdb01, ngene_info_satixS2),
+-- 
+2.16.1
+

@@ -1,0 +1,30 @@
+From 6718c923545e41c837e2dd3c1d7fe84bb3b5ae5a Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sat, 24 Feb 2018 14:12:52 +0100
+Subject: [PATCH 10/12] [media] ngene: don't treat non-existing demods as error
+
+When probing the I2C busses in cineS2_probe(), it's no error when there's
+no hardware connected to the probed expansion connector, so print this
+informal message with info severity.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ngene/ngene-cards.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ngene/ngene-cards.c b/drivers/media/pci/ngene/ngene-cards.c
+index d603d0af703e..37e9f0eb6d20 100644
+--- a/drivers/media/pci/ngene/ngene-cards.c
++++ b/drivers/media/pci/ngene/ngene-cards.c
+@@ -728,7 +728,7 @@ static int cineS2_probe(struct ngene_channel *chan)
+ 		dev_info(pdev, "STV0367 on channel %d\n", chan->number);
+ 		demod_attach_stv0367(chan, i2c);
+ 	} else {
+-		dev_err(pdev, "No demod found on chan %d\n", chan->number);
++		dev_info(pdev, "No demod found on chan %d\n", chan->number);
+ 		return -ENODEV;
+ 	}
+ 	return 0;
+-- 
+2.16.1
+
