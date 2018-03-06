@@ -1,0 +1,27 @@
+From a43d90a06b6b6524122416d8e893962b88f3ac74 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Tue, 6 Mar 2018 18:40:30 +0100
+Subject: [PATCH 0/2] ngene CI TS fixup
+
+Remainder of the ngene updates series, taking care of the TS buffer offset
+shift which occurs in conjunction with CICAM hardware during CAM inits.
+
+Changed as requested to get rid of the DEBUG_CI_XFER ifdeffery.
+
+This might aswell be considered a v3 of [1], but as 10 of 12 patches were
+merged already, these two patches can be treated separate.
+
+[1] https://www.spinics.net/lists/linux-media/msg129606.html
+
+Daniel Scheller (2):
+  [media] ngene: move the tsin_exchange() stripcopy block into a
+    function
+  [media] ngene: compensate for TS buffer offset shifts
+
+ drivers/media/pci/ngene/ngene-dvb.c | 126 ++++++++++++++++++++++++++++--------
+ drivers/media/pci/ngene/ngene.h     |   3 +
+ 2 files changed, 102 insertions(+), 27 deletions(-)
+
+-- 
+2.16.1
+
