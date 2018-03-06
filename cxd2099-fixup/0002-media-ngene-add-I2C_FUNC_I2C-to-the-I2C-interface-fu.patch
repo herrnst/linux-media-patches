@@ -1,0 +1,32 @@
+From 3d6c7effb33d6193de7aaea1e6c90714349bd4d9 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 19 Nov 2017 18:27:57 +0100
+Subject: [PATCH 2/4] [media] ngene: add I2C_FUNC_I2C to the I2C interface
+ functionality
+
+Report I2C_FUNC_I2C in .functionality() aswell. The I2C interface can
+handle this fine and even is required for all I2C client drivers that
+utilise the regmap API which are used from within the ngene driver.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+Signed-off-by: Jasmin Jessich <jasmin@anw.at>
+---
+ drivers/media/pci/ngene/ngene-i2c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ngene/ngene-i2c.c b/drivers/media/pci/ngene/ngene-i2c.c
+index 3004947f300b..092d46c2a3a9 100644
+--- a/drivers/media/pci/ngene/ngene-i2c.c
++++ b/drivers/media/pci/ngene/ngene-i2c.c
+@@ -147,7 +147,7 @@ static int ngene_i2c_master_xfer(struct i2c_adapter *adapter,
+ 
+ static u32 ngene_i2c_functionality(struct i2c_adapter *adap)
+ {
+-	return I2C_FUNC_SMBUS_EMUL;
++	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
+ }
+ 
+ static const struct i2c_algorithm ngene_i2c_algo = {
+-- 
+2.16.1
+

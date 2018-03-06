@@ -1,0 +1,31 @@
+From 4134d5323cd5267a5631d7d3a2a246ae7944fb47 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Tue, 6 Mar 2018 17:35:19 +0100
+Subject: [PATCH 0/4] cxd2099 series fixup
+
+These are the missing bits from the cxd2099 that went MIA during the
+merge of the series.
+
+Please pull - ngene driver requires the ngene patch for all I2C clients
+to work (including the tda18212 that's now used since the merge of the
+other ngene series) and ddbridge can't make use of the cxd2099 driver
+at all right now.
+
+Daniel Scheller (3):
+  [media] ddbridge: adapt cxd2099 attach to new i2c_client way
+  [media] ngene: add I2C_FUNC_I2C to the I2C interface functionality
+  [media] dvb-frontends/cxd2099: remove remainders from old attach way
+
+Jasmin Jessich (1):
+  [media] MAINTAINERS: add entry for cxd2099
+
+ MAINTAINERS                              |  8 +++++
+ drivers/media/dvb-frontends/cxd2099.h    | 10 ------
+ drivers/media/pci/ddbridge/ddbridge-ci.c | 62 +++++++++++++++++++++++++++++---
+ drivers/media/pci/ddbridge/ddbridge.h    |  1 +
+ drivers/media/pci/ngene/ngene-i2c.c      |  2 +-
+ 5 files changed, 67 insertions(+), 16 deletions(-)
+
+-- 
+2.16.1
+

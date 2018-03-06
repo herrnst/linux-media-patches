@@ -1,0 +1,36 @@
+From 4134d5323cd5267a5631d7d3a2a246ae7944fb47 Mon Sep 17 00:00:00 2001
+From: Jasmin Jessich <jasmin@anw.at>
+Date: Mon, 5 Feb 2018 20:31:11 +0100
+Subject: [PATCH 4/4] [media] MAINTAINERS: add entry for cxd2099
+
+The cxd2099 driver is now maintained and being taken care of by
+
+  * Jasmin Jessich <jasmin@anw.at>
+
+Signed-off-by: Jasmin Jessich <jasmin@anw.at>
+---
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0eea2f0e9456..298f0b84a4ed 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8612,6 +8612,14 @@ T:	git git://linuxtv.org/media_tree.git
+ S:	Supported
+ F:	drivers/media/dvb-frontends/ascot2e*
+ 
++MEDIA DRIVERS FOR CXD2099AR CI CONTROLLERS
++M:	Jasmin Jessich <jasmin@anw.at>
++L:	linux-media@vger.kernel.org
++W:	https://linuxtv.org
++T:	git git://linuxtv.org/media_tree.git
++S:	Maintained
++F:	drivers/media/dvb-frontends/cxd2099*
++
+ MEDIA DRIVERS FOR CXD2841ER
+ M:	Sergey Kozlov <serjk@netup.ru>
+ M:	Abylay Ospan <aospan@netup.ru>
+-- 
+2.16.1
+
