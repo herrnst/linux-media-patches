@@ -1,0 +1,52 @@
+From 9148be5b77cfdb83b27b06ec7afbf6b31fc9778f Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Wed, 7 Mar 2018 18:13:01 +0100
+Subject: [PATCH 2/4] [media] dvb-frontends/Kconfig: move the SP2 driver to the
+ CI section
+
+The CIMaX SP2 driver is a EN50221 CI controller I2C driver similar to the
+cxd2099 driver. Move it's Kconfig block into the newly introduced CI
+subsection.
+
+Cc: Olli Salonen <olli.salonen@iki.fi>
+Cc: Antti Palosaari <crope@iki.fi>
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/Kconfig | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/Kconfig b/drivers/media/dvb-frontends/Kconfig
+index fcfa1135557e..687086cdb870 100644
+--- a/drivers/media/dvb-frontends/Kconfig
++++ b/drivers/media/dvb-frontends/Kconfig
+@@ -824,13 +824,6 @@ config DVB_A8293
+ 	depends on DVB_CORE && I2C
+ 	default m if !MEDIA_SUBDRV_AUTOSELECT
+ 
+-config DVB_SP2
+-	tristate "CIMaX SP2"
+-	depends on DVB_CORE && I2C
+-	default m if !MEDIA_SUBDRV_AUTOSELECT
+-	help
+-	  CIMaX SP2/SP2HF Common Interface module.
+-
+ config DVB_LGS8GL5
+ 	tristate "Silicon Legend LGS-8GL5 demodulator (OFDM)"
+ 	depends on DVB_CORE && I2C
+@@ -920,6 +913,13 @@ config DVB_CXD2099
+ 
+ 	  Say Y when you want to support these devices.
+ 
++config DVB_SP2
++	tristate "CIMaX SP2"
++	depends on DVB_CORE && I2C
++	default m if !MEDIA_SUBDRV_AUTOSELECT
++	help
++	  CIMaX SP2/SP2HF Common Interface module.
++
+ comment "Tools to develop new frontends"
+ 
+ config DVB_DUMMY_FE
+-- 
+2.16.1
+

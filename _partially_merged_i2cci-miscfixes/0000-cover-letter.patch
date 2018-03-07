@@ -1,0 +1,30 @@
+From dae65378330f857c42a5505cdc058e3bde53f7d0 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Wed, 7 Mar 2018 20:17:52 +0100
+Subject: [PATCH 0/4] misc cxd2099/Kconfig/ddbridge/ngene improvements
+
+This series improves this:
+
+* The cxd2099 Kconfig block is improved to be more complete and to match
+  those of the other drivers
+* The sp2 CI driver is moved down to the new CI EN50221 subsection in the
+  Kconfig of the dvb-frontends/ subdir
+* Both ddbridge's and ngene's I2C client handling is cleaned up to make
+  use of the new dvb_module_*() I2C handling helpers.
+
+Daniel Scheller (4):
+  [media] dvb-frontends/cxd2099: Kconfig additions
+  [media] dvb-frontends/Kconfig: move the SP2 driver to the CI section
+  [media] ddbridge: use common DVB I2C client handling helpers
+  [media] ngene: use common DVB I2C client handling helpers
+
+ drivers/media/dvb-frontends/Kconfig        | 18 +++++++------
+ drivers/media/pci/ddbridge/ddbridge-ci.c   | 33 +++++------------------
+ drivers/media/pci/ddbridge/ddbridge-core.c | 37 ++++++-------------------
+ drivers/media/pci/ngene/ngene-cards.c      | 25 ++++-------------
+ drivers/media/pci/ngene/ngene-core.c       | 43 +++++++-----------------------
+ 5 files changed, 40 insertions(+), 116 deletions(-)
+
+-- 
+2.16.1
+
