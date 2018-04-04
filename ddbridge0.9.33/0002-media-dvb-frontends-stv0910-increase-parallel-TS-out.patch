@@ -1,0 +1,48 @@
+From 89783454d550e9438a9386cafd1ab29a97cf3354 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Mon, 15 Jan 2018 18:44:48 +0100
+Subject: [PATCH 02/20] [media] dvb-frontends/stv0910: increase parallel TS
+ output speed
+
+When running in parallel TS mode (cfg->parallel=1), increase the output
+speed in the demod.
+
+Picked up from the upstream dddvb-0.9.33 release.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0910.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/stv0910.c b/drivers/media/dvb-frontends/stv0910.c
+index f5b5ce971c0c..0d6130f97c36 100644
+--- a/drivers/media/dvb-frontends/stv0910.c
++++ b/drivers/media/dvb-frontends/stv0910.c
+@@ -1200,7 +1200,6 @@ static int probe(struct stv *state)
+ 	write_reg(state, RSTV0910_P1_TSCFGM, 0xC0); /* Manual speed */
+ 	write_reg(state, RSTV0910_P1_TSCFGL, 0x20);
+ 
+-	/* Speed = 67.5 MHz */
+ 	write_reg(state, RSTV0910_P1_TSSPEED, state->tsspeed);
+ 
+ 	write_reg(state, RSTV0910_P2_TSCFGH, state->tscfgh | 0x01);
+@@ -1208,7 +1207,6 @@ static int probe(struct stv *state)
+ 	write_reg(state, RSTV0910_P2_TSCFGM, 0xC0); /* Manual speed */
+ 	write_reg(state, RSTV0910_P2_TSCFGL, 0x20);
+ 
+-	/* Speed = 67.5 MHz */
+ 	write_reg(state, RSTV0910_P2_TSSPEED, state->tsspeed);
+ 
+ 	/* Reset stream merger */
+@@ -1790,7 +1788,7 @@ struct dvb_frontend *stv0910_attach(struct i2c_adapter *i2c,
+ 	state->tscfgh = 0x20 | (cfg->parallel ? 0 : 0x40);
+ 	state->tsgeneral = (cfg->parallel == 2) ? 0x02 : 0x00;
+ 	state->i2crpt = 0x0A | ((cfg->rptlvl & 0x07) << 4);
+-	state->tsspeed = 0x28;
++	state->tsspeed = cfg->parallel ? 0x10 : 0x28;
+ 	state->nr = nr;
+ 	state->regoff = state->nr ? 0 : 0x200;
+ 	state->search_range = 16000000;
+-- 
+2.16.1
+

@@ -1,0 +1,48 @@
+From 2ff220b37c4e4e264acc4ce5a197e7e4bf5498c2 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Mon, 22 Jan 2018 20:27:41 +0100
+Subject: [PATCH 11/20] [media] ddbridge: use spin_lock_irqsave() in
+ output_work()
+
+Make sure to save IRQ states before taking the dma lock, as already done
+in it's input_work() counterpart.
+
+Picked up from the upstream dddvb-0.9.33 release.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index 9d91221dacc4..c22537eceee5 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -2132,18 +2132,18 @@ static void output_work(struct work_struct *work)
+ 	struct ddb_dma *dma = container_of(work, struct ddb_dma, work);
+ 	struct ddb_output *output = (struct ddb_output *)dma->io;
+ 	struct ddb *dev = output->port->dev;
++	unsigned long flags;
+ 
+-	spin_lock(&dma->lock);
+-	if (!dma->running) {
+-		spin_unlock(&dma->lock);
+-		return;
+-	}
++	spin_lock_irqsave(&dma->lock, flags);
++	if (!dma->running)
++		goto unlock_exit;
+ 	dma->stat = ddbreadl(dev, DMA_BUFFER_CURRENT(dma));
+ 	dma->ctrl = ddbreadl(dev, DMA_BUFFER_CONTROL(dma));
+ 	if (output->redi)
+ 		output_ack_input(output, output->redi);
+ 	wake_up(&dma->wq);
+-	spin_unlock(&dma->lock);
++unlock_exit:
++	spin_unlock_irqrestore(&dma->lock, flags);
+ }
+ 
+ static void output_handler(void *data)
+-- 
+2.16.1
+

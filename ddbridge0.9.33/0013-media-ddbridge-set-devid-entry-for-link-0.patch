@@ -1,0 +1,31 @@
+From a0723890587661cbb4345eb3e782a05329f8c9ab Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Wed, 14 Mar 2018 21:19:18 +0100
+Subject: [PATCH 13/20] [media] ddbridge: set devid entry for link 0
+
+Currently, /sys/class/ddbridgeX/devid always reports 0 due to devid not
+being set at all. Set the devid field alongside while storing all other
+hardware ID data.
+
+Picked up from the upstream dddvb-0.9.33 release.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-main.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-main.c b/drivers/media/pci/ddbridge/ddbridge-main.c
+index 008be9066814..6356b48b3874 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-main.c
++++ b/drivers/media/pci/ddbridge/ddbridge-main.c
+@@ -198,6 +198,7 @@ static int ddb_probe(struct pci_dev *pdev,
+ 	dev->link[0].ids.device = id->device;
+ 	dev->link[0].ids.subvendor = id->subvendor;
+ 	dev->link[0].ids.subdevice = pdev->subsystem_device;
++	dev->link[0].ids.devid = (id->device << 16) | id->vendor;
+ 
+ 	dev->link[0].dev = dev;
+ 	dev->link[0].info = get_ddb_info(id->vendor, id->device,
+-- 
+2.16.1
+
