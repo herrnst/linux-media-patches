@@ -1,0 +1,36 @@
+From 9d645711f5d5aed244f845791c2000e268ac43b9 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Mon, 15 Jan 2018 19:17:26 +0100
+Subject: [PATCH v2 01/19] [media] dvb-frontends/stv0910: add init values for
+ TSINSDELM/L
+
+The TSINSDEL registers were lacking initialisation in the stv0910 demod
+driver. Initialise them (both demods) in the probe() function.
+
+Picked up from the upstream dddvb-0.9.33 release.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0910.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/media/dvb-frontends/stv0910.c b/drivers/media/dvb-frontends/stv0910.c
+index 52355c14fd64..f5b5ce971c0c 100644
+--- a/drivers/media/dvb-frontends/stv0910.c
++++ b/drivers/media/dvb-frontends/stv0910.c
+@@ -1220,6 +1220,12 @@ static int probe(struct stv *state)
+ 	write_reg(state, RSTV0910_P1_I2CRPT, state->i2crpt);
+ 	write_reg(state, RSTV0910_P2_I2CRPT, state->i2crpt);
+ 
++	write_reg(state, RSTV0910_P1_TSINSDELM, 0x17);
++	write_reg(state, RSTV0910_P1_TSINSDELL, 0xff);
++
++	write_reg(state, RSTV0910_P2_TSINSDELM, 0x17);
++	write_reg(state, RSTV0910_P2_TSINSDELL, 0xff);
++
+ 	init_diseqc(state);
+ 	return 0;
+ }
+-- 
+2.16.1
+

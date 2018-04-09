@@ -1,0 +1,33 @@
+From 882aaf872bd3174f2dec1d051e12881c836fa652 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Wed, 14 Mar 2018 21:22:00 +0100
+Subject: [PATCH v2 02/19] [media] dvb-frontends/stv0910: fix CNR reporting in
+ read_snr()
+
+The CNR value determined in read_snr() is reported via the wrong variable.
+It uses FE_SCALE_DECIBEL, which implies the value to be reported in svalue
+instead of uvalue. Fix this accordingly.
+
+Picked up from the upstream dddvb-0.9.33 release.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0910.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/dvb-frontends/stv0910.c b/drivers/media/dvb-frontends/stv0910.c
+index f5b5ce971c0c..1d96ae9f9f6e 100644
+--- a/drivers/media/dvb-frontends/stv0910.c
++++ b/drivers/media/dvb-frontends/stv0910.c
+@@ -1326,7 +1326,7 @@ static int read_snr(struct dvb_frontend *fe)
+ 
+ 	if (!get_signal_to_noise(state, &snrval)) {
+ 		p->cnr.stat[0].scale = FE_SCALE_DECIBEL;
+-		p->cnr.stat[0].uvalue = 100 * snrval; /* fix scale */
++		p->cnr.stat[0].svalue = 100 * snrval; /* fix scale */
+ 	} else {
+ 		p->cnr.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
+ 	}
+-- 
+2.16.1
+

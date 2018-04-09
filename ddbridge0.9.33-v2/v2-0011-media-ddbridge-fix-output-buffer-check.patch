@@ -1,0 +1,38 @@
+From 7ea451617915887e5638abafc55e6d79d310b67f Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Mon, 22 Jan 2018 20:31:04 +0100
+Subject: [PATCH v2 11/19] [media] ddbridge: fix output buffer check
+
+A 188 byte gap has to be left between the writer and the consumer. This
+requires 2*188 bytes available to be able to write to the output buffers.
+So, change ddb_output_free() to report free bytes according to this rule.
+
+Picked up from the upstream dddvb-0.9.33 release.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index c22537eceee5..e9c2e3e5d64b 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -587,12 +587,12 @@ static u32 ddb_output_free(struct ddb_output *output)
+ 
+ 	if (output->dma->cbuf != idx) {
+ 		if ((((output->dma->cbuf + 1) % output->dma->num) == idx) &&
+-		    (output->dma->size - output->dma->coff <= 188))
++		    (output->dma->size - output->dma->coff <= (2 * 188)))
+ 			return 0;
+ 		return 188;
+ 	}
+ 	diff = off - output->dma->coff;
+-	if (diff <= 0 || diff > 188)
++	if (diff <= 0 || diff > (2 * 188))
+ 		return 188;
+ 	return 0;
+ }
+-- 
+2.16.1
+

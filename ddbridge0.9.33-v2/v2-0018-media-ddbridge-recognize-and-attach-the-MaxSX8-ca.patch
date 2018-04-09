@@ -1,0 +1,59 @@
+From 4d426a297d27d8abec257adc6a6a41289448e043 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Tue, 19 Dec 2017 22:34:22 +0100
+Subject: [PATCH v2 18/19] [media] ddbridge: recognize and attach the MaxSX8
+ cards
+
+Add needed logic into dvb_input_attach(), ddb_port_probe() and
+ddb_ports_init() to initialize and support these new cards.
+
+Picked up from the upstream dddvb-0.9.33 release.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index 59e137516003..4a2819d3e225 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -1574,6 +1574,10 @@ static int dvb_input_attach(struct ddb_input *input)
+ 		if (demod_attach_dummy(input) < 0)
+ 			goto err_detach;
+ 		break;
++	case DDB_TUNER_MCI:
++		if (ddb_fe_attach_mci(input) < 0)
++			goto err_detach;
++		break;
+ 	default:
+ 		return 0;
+ 	}
+@@ -1869,6 +1873,16 @@ static void ddb_port_probe(struct ddb_port *port)
+ 		return;
+ 	}
+ 
++	if (dev->link[l].info->type == DDB_OCTOPUS_MCI) {
++		if (port->nr >= dev->link[l].info->mci)
++			return;
++		port->name = "DUAL MCI";
++		port->type_name = "MCI";
++		port->class = DDB_PORT_TUNER;
++		port->type = DDB_TUNER_MCI;
++		return;
++	}
++
+ 	if (port->nr > 1 && dev->link[l].info->type == DDB_OCTOPUS_CI) {
+ 		port->name = "CI internal";
+ 		port->type_name = "INTERNAL";
+@@ -2411,6 +2425,7 @@ void ddb_ports_init(struct ddb *dev)
+ 				break;
+ 			case DDB_OCTOPUS_MAX:
+ 			case DDB_OCTOPUS_MAX_CT:
++			case DDB_OCTOPUS_MCI:
+ 				ddb_input_init(port, 2 * i, 0, 2 * p);
+ 				ddb_input_init(port, 2 * i + 1, 1, 2 * p + 1);
+ 				break;
+-- 
+2.16.1
+
