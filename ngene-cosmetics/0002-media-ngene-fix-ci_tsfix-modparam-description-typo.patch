@@ -1,0 +1,28 @@
+From 74832020c2cd717948072096f6ab58541f58da18 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 22 Apr 2018 17:38:29 +0200
+Subject: [PATCH 2/2] [media] ngene: fix ci_tsfix modparam description typo
+
+s/shifs/shifts/
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ngene/ngene-dvb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ngene/ngene-dvb.c b/drivers/media/pci/ngene/ngene-dvb.c
+index fee89b9ed9c1..5147e83397a1 100644
+--- a/drivers/media/pci/ngene/ngene-dvb.c
++++ b/drivers/media/pci/ngene/ngene-dvb.c
+@@ -40,7 +40,7 @@
+ 
+ static int ci_tsfix = 1;
+ module_param(ci_tsfix, int, 0444);
+-MODULE_PARM_DESC(ci_tsfix, "Detect and fix TS buffer offset shifs in conjunction with CI expansions (default: 1/enabled)");
++MODULE_PARM_DESC(ci_tsfix, "Detect and fix TS buffer offset shifts in conjunction with CI expansions (default: 1/enabled)");
+ 
+ /****************************************************************************/
+ /* COMMAND API interface ****************************************************/
+-- 
+2.16.1
+

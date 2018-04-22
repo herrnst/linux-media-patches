@@ -1,0 +1,53 @@
+From 57c3e5a414b1a18aa47bd2c9e038ddba7aa03bf0 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 22 Apr 2018 13:53:40 +0200
+Subject: [PATCH 1/2] [media] ngene: cleanup superfluous I2C adapter evaluation
+
+Commit ee93340e98bc ("media: ngene: deduplicate I2C adapter evaluation")
+added a helper to evaluate the I2C adapter to be used for demod/tuner
+attachment based on the given ngene_channel, and that helper is used in
+many attach functions to initialise the i2c_adapter variable. However,
+for some reason in tuner_attach_stv6110() and demod_attach_stv0900(), the
+adapter evaluation wasn't removed as in all other functions. Fix (or
+finalize, even) the helper use by cleaning up the superfluous I2C adapter
+evaluation leftover in these two functions.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ngene/ngene-cards.c | 13 -------------
+ 1 file changed, 13 deletions(-)
+
+diff --git a/drivers/media/pci/ngene/ngene-cards.c b/drivers/media/pci/ngene/ngene-cards.c
+index 65fc8f23ad86..caa5976055c4 100644
+--- a/drivers/media/pci/ngene/ngene-cards.c
++++ b/drivers/media/pci/ngene/ngene-cards.c
+@@ -137,11 +137,6 @@ static int tuner_attach_stv6110(struct ngene_channel *chan)
+ 		chan->dev->card_info->tuner_config[chan->number];
+ 	const struct stv6110x_devctl *ctl;
+ 
+-	if (chan->number < 2)
+-		i2c = &chan->dev->channel[0].i2c_adapter;
+-	else
+-		i2c = &chan->dev->channel[1].i2c_adapter;
+-
+ 	ctl = dvb_attach(stv6110x_attach, chan->fe, tunerconf, i2c);
+ 	if (ctl == NULL) {
+ 		dev_err(pdev, "No STV6110X found!\n");
+@@ -304,14 +299,6 @@ static int demod_attach_stv0900(struct ngene_channel *chan)
+ 	struct stv090x_config *feconf = (struct stv090x_config *)
+ 		chan->dev->card_info->fe_config[chan->number];
+ 
+-	/* tuner 1+2: i2c adapter #0, tuner 3+4: i2c adapter #1 */
+-	/* Note: Both adapters share the same i2c bus, but the demod     */
+-	/*       driver requires that each demod has its own i2c adapter */
+-	if (chan->number < 2)
+-		i2c = &chan->dev->channel[0].i2c_adapter;
+-	else
+-		i2c = &chan->dev->channel[1].i2c_adapter;
+-
+ 	chan->fe = dvb_attach(stv090x_attach, feconf, i2c,
+ 			(chan->number & 1) == 0 ? STV090x_DEMODULATOR_0
+ 						: STV090x_DEMODULATOR_1);
+-- 
+2.16.1
+
