@@ -1,0 +1,43 @@
+From 744f2e291337ad3abbebd59a98f64887a03a4042 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Wed, 9 May 2018 22:00:20 +0200
+Subject: [PATCH 0/4] ddbridge-0.9.33 fixes and improvements
+
+Four post-ddbridge-0.9.33 patches fixing and improving a few things:
+
+Patch 1 adds protection into the new ddbridge-mci code against an
+out-of-bounds array write access as reported by CoverityScan and brought
+to attention by Colin Ian King.
+
+Patch 2 adds missing function argument identifiers to ddb_mci_attach() to
+silence checkpatch. It still complains about the **fn_set_input which IS
+the identifier but doesn't seem to be caught by checkpatch properly.
+
+Patches 3 and 4 enable the higher speed TS mode on stv0910-equipped cards
+and thus enables for higher bitrate transponders when the detected card
+firmware permits this. This is basically what was removed in the initial
+ddbridge-0.9.33 patch series but enhanced to be only enabled when the
+FPGA firmware permits this.
+
+Please merge, this should go in alongside the already merged ddbridge
+0.9.33 patches. Thanks.
+
+Daniel Scheller (4):
+  [media] ddbridge/mci: protect against out-of-bounds array access in
+    stop()
+  [media] ddbridge/mci: add identifiers to function definition arguments
+  [media] dvb-frontends/stv0910: make TS speed configurable
+  [media] ddbridge: conditionally enable fast TS for stv0910-equipped
+    bridges
+
+ drivers/media/dvb-frontends/stv0910.c      |  5 ++---
+ drivers/media/dvb-frontends/stv0910.h      |  1 +
+ drivers/media/pci/ddbridge/ddbridge-core.c | 35 +++++++++++++++++++++++++-----
+ drivers/media/pci/ddbridge/ddbridge-mci.c  | 23 ++++++++++----------
+ drivers/media/pci/ddbridge/ddbridge-mci.h  |  6 ++++-
+ drivers/media/pci/ngene/ngene-cards.c      |  1 +
+ 6 files changed, 51 insertions(+), 20 deletions(-)
+
+-- 
+2.16.1
+

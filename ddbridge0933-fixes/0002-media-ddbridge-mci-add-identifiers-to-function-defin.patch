@@ -1,0 +1,48 @@
+From 9a64e6170422e191e1e043cf05e7c000667d4200 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Wed, 9 May 2018 14:16:19 +0200
+Subject: [PATCH 2/4] [media] ddbridge/mci: add identifiers to function
+ definition arguments
+
+Fixes two checkpatch warnings
+
+  WARNING: function definition argument 'xxx' should also have an identifier name
+
+in the ddb_mci_attach() prototype definition. checkpatch keeps complaining
+on the "int (**fn_set_input)" as it seems to have issues with the
+ptr-to-ptr, though this probably needs fixing in checkpatch.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-mci.c | 2 +-
+ drivers/media/pci/ddbridge/ddbridge-mci.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-mci.c b/drivers/media/pci/ddbridge/ddbridge-mci.c
+index 8d9592e75ad5..4ac634fc96e4 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-mci.c
++++ b/drivers/media/pci/ddbridge/ddbridge-mci.c
+@@ -500,7 +500,7 @@ static int probe(struct mci *state)
+ struct dvb_frontend
+ *ddb_mci_attach(struct ddb_input *input,
+ 		int mci_type, int nr,
+-		int (**fn_set_input)(struct dvb_frontend *, int))
++		int (**fn_set_input)(struct dvb_frontend *fe, int input))
+ {
+ 	struct ddb_port *port = input->port;
+ 	struct ddb *dev = port->dev;
+diff --git a/drivers/media/pci/ddbridge/ddbridge-mci.h b/drivers/media/pci/ddbridge/ddbridge-mci.h
+index 453dcb9f8208..209cc2b92dff 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-mci.h
++++ b/drivers/media/pci/ddbridge/ddbridge-mci.h
+@@ -151,6 +151,6 @@ struct mci_result {
+ struct dvb_frontend
+ *ddb_mci_attach(struct ddb_input *input,
+ 		int mci_type, int nr,
+-		int (**fn_set_input)(struct dvb_frontend *, int));
++		int (**fn_set_input)(struct dvb_frontend *fe, int input));
+ 
+ #endif /* _DDBRIDGE_MCI_H_ */
+-- 
+2.16.1
+
