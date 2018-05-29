@@ -1,0 +1,55 @@
+From da776bf16f7fa63155b54c1c841c5b767d6c9eb9 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sat, 12 May 2018 13:15:43 +0200
+Subject: [PATCH v3 0/3] IOCTLs in ddbridge
+
+Third iteration of the IOCTL patches for ddbridge, split into multiple
+patches:
+
+Patch 1 just adds the reservation/information of the used IOCTLs into
+ioctl-numbers.txt in the Docs dir. Doc, s390 and LKML are Cc'ed on
+this patch.
+
+Patch 2 adds the header which defines the IOCTLs in include/uapi/ so
+userspace applications can directly reuse the IOCTL definitions by
+including this file.
+
+Patch 3 (re)implements the IOCTL handling into ddbridge. This is
+basically code that was there since literally forever, but had to be
+removed along with the initial ddbridge-0.9.x bump.
+
+The whole functionality gets more important these days since ie. the
+new MaxSX8 cards may require updating from time to time since these
+cards implement the demod/tuner communication in their FPGA (which
+normally I2C drivers exist for). Also, the CineS2v7 and derivatives
+received some important updates and the possibility to receive higher
+bitrate transponders these days, so users should be able to update
+their cards.
+
+Changes since the last versions:
+- Docs, headers and code split apart and sent out separately to
+  the subsystems.
+- Only the two absolutely necessary IOCTLs (DDB_FLASHIO and DDB_ID)
+  are implemented for now.
+
+Daniel Scheller (3):
+  Documentation: ioctl-number: add ddbridge IOCTLs
+  [media] ddbridge: uAPI header for IOCTL definitions and related data
+    structs
+  [media] ddbridge: implement IOCTL handling
+
+ Documentation/ioctl/ioctl-number.txt        |   1 +
+ MAINTAINERS                                 |   1 +
+ drivers/media/pci/ddbridge/Makefile         |   3 +-
+ drivers/media/pci/ddbridge/ddbridge-core.c  | 111 +----------------
+ drivers/media/pci/ddbridge/ddbridge-ioctl.c | 179 ++++++++++++++++++++++++++++
+ drivers/media/pci/ddbridge/ddbridge-ioctl.h |  32 +++++
+ include/uapi/linux/ddbridge-ioctl.h         |  61 ++++++++++
+ 7 files changed, 278 insertions(+), 110 deletions(-)
+ create mode 100644 drivers/media/pci/ddbridge/ddbridge-ioctl.c
+ create mode 100644 drivers/media/pci/ddbridge/ddbridge-ioctl.h
+ create mode 100644 include/uapi/linux/ddbridge-ioctl.h
+
+-- 
+2.16.1
+
