@@ -1,0 +1,48 @@
+From 380f3ae665ca2826d7b9b5657cbdee64544467f2 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Tue, 19 Jun 2018 19:40:48 +0200
+Subject: [PATCH v3 7/9] [media] dvb-frontends/stv0910: add SPDX license
+ identifier
+
+As it is clear that the driver is licensed under the terms of GPLv2-only
+by now, add a matching SPDX license identifier to all driver files.
+
+Cc: Ralph Metzler <rjkm@metzlerbros.de>
+Cc: Manfred Voelkel <mvoelkel@DigitalDevices.de>
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0910.c      | 1 +
+ drivers/media/dvb-frontends/stv0910.h      | 1 +
+ drivers/media/dvb-frontends/stv0910_regs.h | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/drivers/media/dvb-frontends/stv0910.c b/drivers/media/dvb-frontends/stv0910.c
+index 16f73c16ac61..a81d3cc0acae 100644
+--- a/drivers/media/dvb-frontends/stv0910.c
++++ b/drivers/media/dvb-frontends/stv0910.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Driver for the ST STV0910 DVB-S/S2 demodulator.
+  *
+diff --git a/drivers/media/dvb-frontends/stv0910.h b/drivers/media/dvb-frontends/stv0910.h
+index c3985bee749f..19b48409e050 100644
+--- a/drivers/media/dvb-frontends/stv0910.h
++++ b/drivers/media/dvb-frontends/stv0910.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Driver for the ST STV0910 DVB-S/S2 demodulator.
+  *
+diff --git a/drivers/media/dvb-frontends/stv0910_regs.h b/drivers/media/dvb-frontends/stv0910_regs.h
+index 4440892df61f..12ae86fae965 100644
+--- a/drivers/media/dvb-frontends/stv0910_regs.h
++++ b/drivers/media/dvb-frontends/stv0910_regs.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * @DVB-S/DVB-S2 STMicroelectronics STV0900 register definitions
+  * Author Manfred Voelkel, August 2013
+-- 
+2.16.4
+

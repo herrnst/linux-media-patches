@@ -1,0 +1,45 @@
+From 5ae62b5fb88d3270d09ac793884bdeae324a42e2 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Tue, 19 Jun 2018 19:16:18 +0200
+Subject: [PATCH 3/3] [media] dvb-frontends/cxd2099: fix boilerplate whitespace
+
+There's a superfluous whitespace in the boilerplate license text in both
+.c and .h files. Fix this.
+
+Cc: Ralph Metzler <rjkm@metzlerbros.de>
+Cc: Manfred Voelkel <mvoelkel@DigitalDevices.de>
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/cxd2099.c | 2 +-
+ drivers/media/dvb-frontends/cxd2099.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/cxd2099.c b/drivers/media/dvb-frontends/cxd2099.c
+index 5264e873850e..5d8884ed64ef 100644
+--- a/drivers/media/dvb-frontends/cxd2099.c
++++ b/drivers/media/dvb-frontends/cxd2099.c
+@@ -10,7 +10,7 @@
+  *
+  * This program is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  * GNU General Public License for more details.
+  */
+ 
+diff --git a/drivers/media/dvb-frontends/cxd2099.h b/drivers/media/dvb-frontends/cxd2099.h
+index 0c101bdef01d..30787095843a 100644
+--- a/drivers/media/dvb-frontends/cxd2099.h
++++ b/drivers/media/dvb-frontends/cxd2099.h
+@@ -10,7 +10,7 @@
+  *
+  * This program is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  * GNU General Public License for more details.
+  */
+ 
+-- 
+2.16.4
+

@@ -1,0 +1,32 @@
+From 5ae62b5fb88d3270d09ac793884bdeae324a42e2 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Tue, 19 Jun 2018 20:24:40 +0200
+Subject: [PATCH 0/3] cxd2099: cleanup licensing
+
+Upstream committed a change to the dddvb driver package ([1]) that makes
+things clear everything is licensed under the terms of the GPLv2-only.
+So, apply the MODULE_LICENSE change to cxd2099 and, as things are sorted
+now, apply SPDX license identifiers (and fix two spurious whitespaces).
+
+Split from the series that touches all other Digital Devices drivers
+since Jasmin is the maintainer for the cxd2099 driver.
+
+Ralph/Manfred: Although all license related things should be clear by
+now, please be so kind and send Acks (or complaints, if any) on these
+patches so we can finally get rid of any mismatches in the in-kernel
+drivers.
+
+[1] https://github.com/DigitalDevices/dddvb/commit/3db30defab4bd5429f6563b084a215b83da01ea0
+
+Daniel Scheller (3):
+  [media] dvb-frontends/cxd2099: fix MODULE_LICENSE to 'GPL v2'
+  [media] dvb-frontends/cxd2099: add SPDX license identifier
+  [media] dvb-frontends/cxd2099: fix boilerplate whitespace
+
+ drivers/media/dvb-frontends/cxd2099.c | 5 +++--
+ drivers/media/dvb-frontends/cxd2099.h | 3 ++-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+-- 
+2.16.4
+

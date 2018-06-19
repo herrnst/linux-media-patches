@@ -1,0 +1,59 @@
+From 54c8a755ad8ed3197281733165b3fd159feb5901 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Tue, 19 Jun 2018 19:43:19 +0200
+Subject: [PATCH v3 8/9] [media] dvb-frontends/stv6111: cleanup and fix
+ licensing boilerplates
+
+The stv6111.h doesn't carry any header nor any licensing boilerplate at
+all, so copy this from the main driver file stv6111.c. While at it,
+apply the usual whitespace/blank line cleanup.
+
+Cc: Ralph Metzler <rjkm@metzlerbros.de>
+Cc: Manfred Voelkel <mvoelkel@DigitalDevices.de>
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv6111.c |  3 +--
+ drivers/media/dvb-frontends/stv6111.h | 15 +++++++++++++++
+ 2 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/stv6111.c b/drivers/media/dvb-frontends/stv6111.c
+index 25208a120cb7..88c0cf4c5011 100644
+--- a/drivers/media/dvb-frontends/stv6111.c
++++ b/drivers/media/dvb-frontends/stv6111.c
+@@ -9,9 +9,8 @@
+  *
+  * This program is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  * GNU General Public License for more details.
+- *
+  */
+ 
+ #include <linux/kernel.h>
+diff --git a/drivers/media/dvb-frontends/stv6111.h b/drivers/media/dvb-frontends/stv6111.h
+index 5bc1228dc9bd..809e62361a91 100644
+--- a/drivers/media/dvb-frontends/stv6111.h
++++ b/drivers/media/dvb-frontends/stv6111.h
+@@ -1,3 +1,18 @@
++/*
++ * Driver for the ST STV6111 tuner
++ *
++ * Copyright (C) 2014 Digital Devices GmbH
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 only, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ */
++
+ #ifndef _STV6111_H_
+ #define _STV6111_H_
+ 
+-- 
+2.16.4
+
