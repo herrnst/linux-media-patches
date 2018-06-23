@@ -1,0 +1,32 @@
+From 9a57b409cd59a4f0800977847dff8f60d7633bf5 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sat, 23 Jun 2018 17:23:23 +0200
+Subject: [PATCH 01/19] [media] dvb-frontends/mxl5xx: add break to case DVBS2
+ in get_frontend()
+
+Fix one sparse warning:
+
+    drivers/media/dvb-frontends/mxl5xx.c:731:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+
+as seen in Hans' daily media_tree builds.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/mxl5xx.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/media/dvb-frontends/mxl5xx.c b/drivers/media/dvb-frontends/mxl5xx.c
+index 274d8fca0763..a7d08ace11ba 100644
+--- a/drivers/media/dvb-frontends/mxl5xx.c
++++ b/drivers/media/dvb-frontends/mxl5xx.c
+@@ -739,6 +739,7 @@ static int get_frontend(struct dvb_frontend *fe,
+ 		default:
+ 			break;
+ 		}
++		break;
+ 	case SYS_DVBS:
+ 		switch ((enum MXL_HYDRA_MODULATION_E)
+ 			reg_data[DMD_MODULATION_SCHEME_ADDR]) {
+-- 
+2.16.4
+

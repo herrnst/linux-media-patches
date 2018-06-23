@@ -1,0 +1,35 @@
+From dc4de2de1767b656ce8898339b921985583abafc Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Fri, 15 Jun 2018 19:59:24 +0200
+Subject: [PATCH 05/19] [media] ddbridge: report I2C bus errors
+
+The I2C_COMMAND response reports an error in the I2C bus communication
+using bit 17. Evaluate the response more thoroughly and log an error
+if an I2C problem was detected.
+
+Picked up from the upstream dddvb GIT.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-i2c.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-i2c.c b/drivers/media/pci/ddbridge/ddbridge-i2c.c
+index 667340c86ea7..5a28d7611713 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-i2c.c
++++ b/drivers/media/pci/ddbridge/ddbridge-i2c.c
+@@ -73,7 +73,10 @@ static int ddb_i2c_cmd(struct ddb_i2c *i2c, u32 adr, u32 cmd)
+ 		}
+ 		return -EIO;
+ 	}
+-	if (val & 0x70000)
++	val &= 0x70000;
++	if (val == 0x20000)
++		dev_err(dev->dev, "I2C bus error\n");
++	if (val)
+ 		return -EIO;
+ 	return 0;
+ }
+-- 
+2.16.4
+

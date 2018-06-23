@@ -1,0 +1,32 @@
+From bae77649ca402285efd9c24b03718259403a0dcc Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Fri, 15 Jun 2018 19:14:03 +0200
+Subject: [PATCH 04/19] [media] ddbridge: evaluate the actual link when setting
+ up the dummy tuner
+
+Devices supporting dummy tuner operation can exist on any link, not only
+on link 0, so fix this accordingly.
+
+Picked up from the upstream dddvb GIT.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index 3f83415b06c7..55eb151f329e 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -1859,7 +1859,7 @@ static void ddb_port_probe(struct ddb_port *port)
+ 	/* Handle missing ports and ports without I2C */
+ 
+ 	if (dummy_tuner && !port->nr &&
+-	    dev->link[0].ids.device == 0x0005) {
++	    dev->link[l].ids.device == 0x0005) {
+ 		port->name = "DUMMY";
+ 		port->class = DDB_PORT_TUNER;
+ 		port->type = DDB_TUNER_DUMMY;
+-- 
+2.16.4
+

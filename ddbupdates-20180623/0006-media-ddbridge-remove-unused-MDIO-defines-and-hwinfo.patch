@@ -1,0 +1,51 @@
+From 2aea72da0f8f4ebcb3ff79350a97bcea9c534085 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sat, 16 Jun 2018 14:51:41 +0200
+Subject: [PATCH 06/19] [media] ddbridge: remove unused MDIO defines and hwinfo
+ member
+
+ddbridge has a few MDIO related remainders (defines, hwinfo struct) which
+aren't of any use for the in-kernel driver at all (they're only used in
+conjunction with the OctoNet SAT>IP boxes which the kernel driver doesn't
+have any support for), so clean this up.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/pci/ddbridge/ddbridge-regs.h | 8 --------
+ drivers/media/pci/ddbridge/ddbridge.h      | 1 -
+ 2 files changed, 9 deletions(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-regs.h b/drivers/media/pci/ddbridge/ddbridge-regs.h
+index b978b5991940..f9e1cbb99b53 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-regs.h
++++ b/drivers/media/pci/ddbridge/ddbridge-regs.h
+@@ -33,14 +33,6 @@
+ #define GPIO_INPUT       0x24
+ #define GPIO_DIRECTION   0x28
+ 
+-/* ------------------------------------------------------------------------- */
+-/* MDIO */
+-
+-#define MDIO_CTRL        0x20
+-#define MDIO_ADR         0x24
+-#define MDIO_REG         0x28
+-#define MDIO_VAL         0x2C
+-
+ /* ------------------------------------------------------------------------- */
+ 
+ #define BOARD_CONTROL    0x30
+diff --git a/drivers/media/pci/ddbridge/ddbridge.h b/drivers/media/pci/ddbridge/ddbridge.h
+index a66b1125cc74..9c645bee428a 100644
+--- a/drivers/media/pci/ddbridge/ddbridge.h
++++ b/drivers/media/pci/ddbridge/ddbridge.h
+@@ -127,7 +127,6 @@ struct ddb_info {
+ 	u8    temp_bus;
+ 	u32   board_control;
+ 	u32   board_control_2;
+-	u8    mdio_num;
+ 	u8    con_clock; /* use a continuous clock */
+ 	u8    ts_quirks;
+ #define TS_QUIRK_SERIAL   1
+-- 
+2.16.4
+

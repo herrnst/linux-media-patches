@@ -1,0 +1,34 @@
+From 71ba0d05bcf181d468e24e2de21c08cb436f1428 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Fri, 15 Jun 2018 20:07:53 +0200
+Subject: [PATCH 02/19] [media] dvb-frontends/stv0910: cast the BER denominator
+ shift exp to ULL
+
+To avoid miscalculations related to the BER denominator, the shift
+expression needs to be casted as ULL.
+
+Picked up from the upstream dddvb GIT.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/stv0910.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/stv0910.c b/drivers/media/dvb-frontends/stv0910.c
+index 41444fa1c0bb..91b21eb59531 100644
+--- a/drivers/media/dvb-frontends/stv0910.c
++++ b/drivers/media/dvb-frontends/stv0910.c
+@@ -682,8 +682,8 @@ static int get_bit_error_rate_s(struct stv *state, u32 *bernumerator,
+ 		return -EINVAL;
+ 
+ 	if ((regs[0] & 0x80) == 0) {
+-		state->last_berdenominator = 1 << ((state->berscale * 2) +
+-						  10 + 3);
++		state->last_berdenominator = 1ULL << ((state->berscale * 2) +
++						     10 + 3);
+ 		state->last_bernumerator = ((u32)(regs[0] & 0x7F) << 16) |
+ 			((u32)regs[1] << 8) | regs[2];
+ 		if (state->last_bernumerator < 256 && state->berscale < 6) {
+-- 
+2.16.4
+
