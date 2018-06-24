@@ -1,0 +1,33 @@
+From 12a7a3d1f0c7f95cd231392412017cdf12e88c67 Mon Sep 17 00:00:00 2001
+From: Daniel Scheller <d.scheller@gmx.net>
+Date: Sun, 24 Jun 2018 15:33:30 +0200
+Subject: [PATCH] [media] dvb-frontends/tda18271c2dd: silence sparse fall
+ through warning
+
+Add a break statement in set_params() for the SYS_DVBT(2) case to silence
+this sparse warning:
+
+    drivers/media/dvb-frontends/tda18271c2dd.c:1144:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+
+as reported in Hans' daily media_tree builds.
+
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ drivers/media/dvb-frontends/tda18271c2dd.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/media/dvb-frontends/tda18271c2dd.c b/drivers/media/dvb-frontends/tda18271c2dd.c
+index 2e1d36ae943b..fcffc7b4acf7 100644
+--- a/drivers/media/dvb-frontends/tda18271c2dd.c
++++ b/drivers/media/dvb-frontends/tda18271c2dd.c
+@@ -1154,6 +1154,7 @@ static int set_params(struct dvb_frontend *fe)
+ 		default:
+ 			return -EINVAL;
+ 		}
++		break;
+ 	case SYS_DVBC_ANNEX_A:
+ 	case SYS_DVBC_ANNEX_C:
+ 		if (bw <= 6000000)
+-- 
+2.16.4
+
